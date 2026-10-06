@@ -6,7 +6,11 @@ A lightweight desktop-browser multiplayer FPS prototype. Apex-inspired momentum,
 
 Requires Node 24 LTS and pnpm 11.9.0 (pinned in `package.json`). If you use nvm, run `nvm use` to select the project's Node version from `.nvmrc`.
 
+The GLB models use [Git LFS](https://git-lfs.com/). Install Git LFS (`brew install git-lfs` on macOS), then run the commands below from this directory after cloning. Download the LFS files before building locally or with Docker; builds require the actual models.
+
 ```sh
+git lfs install
+git lfs pull
 pnpm install --frozen-lockfile
 pnpm run dev
 ```

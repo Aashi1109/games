@@ -1,0 +1,91 @@
+{
+  "status": "needs-rook-hand-side-review",
+  "readyForOptimizationCopy": false,
+  "reviewedAt": "2026-10-01T12:49:19.784Z",
+  "combined": {
+    "path": "/Users/ashishpal/Development/projects/drift/output/models/tripo-characters-master/characters-master.glb",
+    "sha256": "c117013de2cf3c1f4ab8440d64c30fd5ef90e9230eaa27dab2bf838d83cf4993",
+    "loadedAndRendered": true,
+    "meshes": 4,
+    "texturesLoaded": 3
+  },
+  "files": [
+    {
+      "path": "/Users/ashishpal/Development/projects/drift/output/models/tripo-characters-master/ember-body.glb",
+      "sha256": "81f5a530508d98ce617eeade9cccd0853f9c858f75c17144d15b9f20d5dee540",
+      "renderedViews": [
+        "front",
+        "back",
+        "side"
+      ],
+      "loadedAndRendered": true,
+      "texturesLoaded": 3
+    },
+    {
+      "path": "/Users/ashishpal/Development/projects/drift/output/models/tripo-characters-master/wisp-body.glb",
+      "sha256": "2abe65804919d56b1cdc6ef96b49f0dcdfdb9cc21069a65acff44cc2cd767377",
+      "renderedViews": [
+        "front",
+        "back",
+        "side"
+      ],
+      "loadedAndRendered": true,
+      "texturesLoaded": 3
+    },
+    {
+      "path": "/Users/ashishpal/Development/projects/drift/output/models/tripo-characters-master/dash-body.glb",
+      "sha256": "4526f0066efc3ca303f9c83d1c54dc863b130e36fd861f9487e2ae38eacc430a",
+      "renderedViews": [
+        "front",
+        "back",
+        "side"
+      ],
+      "loadedAndRendered": true,
+      "texturesLoaded": 3
+    },
+    {
+      "path": "/Users/ashishpal/Development/projects/drift/output/models/tripo-characters-master/rook-body.glb",
+      "sha256": "93e489d5de3eb9f7c77c73038eca97ddca6e9e04c73029a4f807a97a70b70176",
+      "renderedViews": [
+        "front",
+        "back",
+        "side"
+      ],
+      "loadedAndRendered": true,
+      "texturesLoaded": 3
+    }
+  ],
+  "passedFindings": [
+    "All four standalone GLBs and combined pack load with all three embedded texture maps.",
+    "Corrected skin/clothing palette preserved across standalone and combined files.",
+    "Ember, Wisp and Dash front/back/side silhouettes have no large old-rifle remnants visible.",
+    "Wisp former chest rifle stock and cap strip joining the two hands are absent.",
+    "All retained original source positions and UVs match structural provenance audit."
+  ],
+  "openConcerns": [
+    {
+      "piece": "rook-body",
+      "view": "side",
+      "finding": "Broad grey rectangular slab beneath the front hand and detached-looking black palm/flap require semantic classification or cleanup; closed topology alone does not approve this artifact."
+    }
+  ],
+  "evidence": [
+    {
+      "path": "/Users/ashishpal/Development/projects/drift/output/models/tripo-characters-master/front-back-validation.jpg",
+      "sha256": "ed3be583df826b82dd0da4db37fc12c5c29427a81eea5cb6ea925289a1d63b2c"
+    },
+    {
+      "path": "/Users/ashishpal/Development/projects/drift/output/models/tripo-characters-master/side-validation.jpg",
+      "sha256": "0f48c039c1826b08330ca5b89bac06cfc7ca223e2a0b86cdd120f0a3fb2942d1"
+    },
+    {
+      "path": "/Users/ashishpal/Development/projects/drift/output/models/tripo-characters-master/combined-color-validation.jpg",
+      "sha256": "7b3c889cb19d8a038075bf41999714e67a347ffa7cb204e8b0314234cb115b1b"
+    }
+  ],
+  "limitations": [
+    "Body pose and source face proportions preserved; no rig or animation exists.",
+    "Color matching reviewed visually; no measured reference-image similarity score is claimed.",
+    "Source-generated skin/face sculpt remains; Ember brow/jaw differs from reference concept."
+  ]
+}

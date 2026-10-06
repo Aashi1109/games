@@ -1,0 +1,24 @@
+{
+  "status": "passed-visual-review",
+  "reviewedAt": "2026-10-01T12:48:12.981150+00:00",
+  "file": "/Users/ashishpal/Development/projects/drift/output/models/tripo-guns-master/guns-master.glb",
+  "sha256": "a94efaafac3115ef8862bfacdd1c292fcc76bd2ce2ed744694e694890ea53def",
+  "views": [
+    "complete pack front",
+    "complete pack back",
+    "Ember isolated three-quarter",
+    "Wisp isolated three-quarter",
+    "Dash isolated three-quarter",
+    "Rook isolated three-quarter"
+  ],
+  "findings": [
+    "Four separate complete weapons match the supplied original gun model.",
+    "Correct weapon-to-character mapping verified from silhouette and colored accent.",
+    "No character hands, clothing or separation sheets in new weapon models."
+  ],
+  "proof": [
+    "front-review.jpg",
+    "back-review.jpg"
+  ],
+  "scope": "Static mesh appearance. Physical grip alignment and animation are deferred until integration."
+}

@@ -1,0 +1,24 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "drift-arena",
+  "main": "cloudflare/worker.js",
+  "compatibility_date": "2026-10-01",
+  "build": { "command": "pnpm run build" },
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "none",
+    "run_worker_first": ["/ws", "/health"]
+  },
+  "containers": [
+    {
+      "class_name": "DriftContainer",
+      "image": "./Dockerfile",
+      "instance_type": "basic",
+      "max_instances": 1
+    }
+  ],
+  "durable_objects": {
+    "bindings": [{ "name": "DRIFT", "class_name": "DriftContainer" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["DriftContainer"] }]
+}

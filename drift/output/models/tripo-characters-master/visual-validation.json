@@ -1,0 +1,134 @@
+{
+  "status": "passed",
+  "readyForOptimizationCopy": true,
+  "reviewedAt": "2026-10-01T12:51:42.785Z",
+  "combined": {
+    "path": "/Users/ashishpal/Development/projects/drift/output/models/tripo-characters-master/characters-master.glb",
+    "sha256": "6308b04fed8d26f6fd991fb5c4d1c00b535a7788a78000bf53dec01490d4266d",
+    "geometryAndMaterialSignatureMatchRenderedStandaloneFiles": true,
+    "rootFinalCombinedRenderConfirmed": true,
+    "previousIndependentCombinedRender": {
+      "sha256": "c117013de2cf3c1f4ab8440d64c30fd5ef90e9230eaa27dab2bf838d83cf4993",
+      "texturesLoaded": 3,
+      "onlyChangedPiece": "rook-body",
+      "finalChangedPieceRenderedIndependently": true
+    }
+  },
+  "files": [
+    {
+      "path": "/Users/ashishpal/Development/projects/drift/output/models/tripo-characters-master/ember-body.glb",
+      "sha256": "81f5a530508d98ce617eeade9cccd0853f9c858f75c17144d15b9f20d5dee540",
+      "renderedViews": [
+        "front",
+        "back",
+        "side"
+      ],
+      "loadedAndRendered": true,
+      "texturesLoaded": 3,
+      "previousRenderedFileUnchanged": true
+    },
+    {
+      "path": "/Users/ashishpal/Development/projects/drift/output/models/tripo-characters-master/wisp-body.glb",
+      "sha256": "2abe65804919d56b1cdc6ef96b49f0dcdfdb9cc21069a65acff44cc2cd767377",
+      "renderedViews": [
+        "front",
+        "back",
+        "side"
+      ],
+      "loadedAndRendered": true,
+      "texturesLoaded": 3,
+      "previousRenderedFileUnchanged": true
+    },
+    {
+      "path": "/Users/ashishpal/Development/projects/drift/output/models/tripo-characters-master/dash-body.glb",
+      "sha256": "4526f0066efc3ca303f9c83d1c54dc863b130e36fd861f9487e2ae38eacc430a",
+      "renderedViews": [
+        "front",
+        "back",
+        "side"
+      ],
+      "loadedAndRendered": true,
+      "texturesLoaded": 3,
+      "previousRenderedFileUnchanged": true
+    },
+    {
+      "path": "/Users/ashishpal/Development/projects/drift/output/models/tripo-characters-master/rook-body.glb",
+      "sha256": "ece76f68deb4bc5984332b0ee7278275597c9d1ba9f1aa7ddf3984cda0adc385",
+      "renderedViews": [
+        "front",
+        "back",
+        "side"
+      ],
+      "loadedAndRendered": true,
+      "texturesLoaded": 3,
+      "previousRenderedFileUnchanged": false
+    }
+  ],
+  "passedFindings": [
+    "Four standalone GLBs load with all three embedded maps; combined geometry and maps match them exactly.",
+    "Corrected skin/clothing palette preserved.",
+    "All four front/back/side silhouettes show no large old-rifle fragments or cut sheets.",
+    "Wisp former chest rifle stock and cap strip joining hands are absent.",
+    "Final Rook has intact attached hands/wrists and no previous floating magazine or foreend slab.",
+    "Source coordinates and UVs exact for retained triangles; zero open or nonmanifold edges on all four bodies."
+  ],
+  "openConcerns": [],
+  "sourceProvenance": {
+    "manifest": "manifest.json",
+    "structuralReport": "validation.json",
+    "sourceOwnership": {
+      "file": "/Users/ashishpal/Development/projects/drift/output/models/tripo-characters-master/ownership/final-source-partition.npy",
+      "sha256": "3b090f39725ace549e1268dd4d2ec0a36df6eed17e5ac8024ea138b28a9b9fa1",
+      "copiedFrom": "/Users/ashishpal/Development/projects/drift/output/models/tripo-working/triangle-ownership.npy",
+      "scope": "Full final eight-way source assignment retained as provenance; old gun meshes superseded."
+    },
+    "refinementEvidence": [
+      {
+        "file": "/Users/ashishpal/Development/projects/drift/output/models/tripo-characters-master/ownership/rook-final-report.json",
+        "sha256": "e7066df07d0c21efdcfae8b9d13abeed66e163367d7b09ce41b2e436a899d0d8",
+        "copiedFrom": "/Users/ashishpal/Development/projects/drift/output/models/tripo-working/color/cut-rook-body-clean/preserved-fc5cbc06cec7/report.json"
+      },
+      {
+        "file": "/Users/ashishpal/Development/projects/drift/output/models/tripo-characters-master/ownership/rook-final-confirmed-weapon-source-faces.u32",
+        "sha256": "904e538e12f2f2340e71461cd793d5ac6785188609b20f678a3a608a856ad91c",
+        "copiedFrom": "/Users/ashishpal/Development/projects/drift/output/models/tripo-working/color/cut-rook-body-clean/preserved-fc5cbc06cec7/confirmed-weapon-source-faces.u32"
+      },
+      {
+        "file": "/Users/ashishpal/Development/projects/drift/output/models/tripo-characters-master/ownership/rook-final-triangle-ownership-candidate.npy",
+        "sha256": "fc5cbc06cec74253055d52b7c46592b05b9de9bcc47ade030a4c966cad6c1294",
+        "copiedFrom": "/Users/ashishpal/Development/projects/drift/output/models/tripo-working/color/cut-rook-body-clean/preserved-fc5cbc06cec7/triangle-ownership-candidate.npy"
+      }
+    ]
+  },
+  "evidence": [
+    {
+      "file": "front-back-validation.jpg",
+      "scope": "Ember/Wisp/Dash unchanged exact files; old Rook image superseded",
+      "path": "/Users/ashishpal/Development/projects/drift/output/models/tripo-characters-master/front-back-validation.jpg",
+      "sha256": "ed3be583df826b82dd0da4db37fc12c5c29427a81eea5cb6ea925289a1d63b2c"
+    },
+    {
+      "file": "side-validation.jpg",
+      "scope": "Ember/Wisp/Dash unchanged exact files; old Rook image superseded",
+      "path": "/Users/ashishpal/Development/projects/drift/output/models/tripo-characters-master/side-validation.jpg",
+      "sha256": "0f48c039c1826b08330ca5b89bac06cfc7ca223e2a0b86cdd120f0a3fb2942d1"
+    },
+    {
+      "file": "rook-final-validation.jpg",
+      "scope": "Final Rook463752 triangles, all three views",
+      "path": "/Users/ashishpal/Development/projects/drift/output/models/tripo-characters-master/rook-final-validation.jpg",
+      "sha256": "ecf2ac9517e957d8897afbff0f4091e791da6ca55e9d29b8068a7f2f90e1971f"
+    },
+    {
+      "file": "combined-color-validation.jpg",
+      "scope": "Previous combined image-map proof; same exact material signature in final",
+      "path": "/Users/ashishpal/Development/projects/drift/output/models/tripo-characters-master/combined-color-validation.jpg",
+      "sha256": "7b3c889cb19d8a038075bf41999714e67a347ffa7cb204e8b0314234cb115b1b"
+    }
+  ],
+  "limitations": [
+    "Static posed assets; no skeleton or animations, and game integration is not part of this validation.",
+    "Color matching reviewed visually; no measured reference-image similarity score claimed.",
+    "Source face sculpt and stylized surface irregularities preserved, including Ember brow/jaw differences from concept."
+  ]
+}

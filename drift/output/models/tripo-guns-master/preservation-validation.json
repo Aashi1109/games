@@ -1,0 +1,90 @@
+{
+  "status": "PASS",
+  "readBackActualExportedGLBs": true,
+  "allSourceTrianglesAccountedForExactlyOnce": true,
+  "preservedSourceTriangles": 942372,
+  "auditedOmittedSourceTriangles": 48,
+  "sourceSHA256": "ab226246542629439f484e21b0f3e3fc795272becb23bacb58871d52b1d93c97",
+  "files": [
+    {
+      "file": "ember-gun.glb",
+      "meshes": [
+        {
+          "name": "ember-gun",
+          "vertices": 132923,
+          "triangles": 255614
+        }
+      ],
+      "exactPositionsNormalsUVsTriangles": true,
+      "exactTextureBytesAndMaterials": true,
+      "allThreeSourceTextureBindingsMatch": true
+    },
+    {
+      "file": "dash-gun.glb",
+      "meshes": [
+        {
+          "name": "dash-gun",
+          "vertices": 117274,
+          "triangles": 225166
+        }
+      ],
+      "exactPositionsNormalsUVsTriangles": true,
+      "exactTextureBytesAndMaterials": true,
+      "allThreeSourceTextureBindingsMatch": true
+    },
+    {
+      "file": "wisp-gun.glb",
+      "meshes": [
+        {
+          "name": "wisp-gun",
+          "vertices": 102991,
+          "triangles": 198220
+        }
+      ],
+      "exactPositionsNormalsUVsTriangles": true,
+      "exactTextureBytesAndMaterials": true,
+      "allThreeSourceTextureBindingsMatch": true
+    },
+    {
+      "file": "rook-gun.glb",
+      "meshes": [
+        {
+          "name": "rook-gun",
+          "vertices": 136900,
+          "triangles": 263372
+        }
+      ],
+      "exactPositionsNormalsUVsTriangles": true,
+      "exactTextureBytesAndMaterials": true,
+      "allThreeSourceTextureBindingsMatch": true
+    },
+    {
+      "file": "guns-master.glb",
+      "meshes": [
+        {
+          "name": "ember-gun",
+          "vertices": 132923,
+          "triangles": 255614
+        },
+        {
+          "name": "dash-gun",
+          "vertices": 117274,
+          "triangles": 225166
+        },
+        {
+          "name": "wisp-gun",
+          "vertices": 102991,
+          "triangles": 198220
+        },
+        {
+          "name": "rook-gun",
+          "vertices": 136900,
+          "triangles": 263372
+        }
+      ],
+      "exactPositionsNormalsUVsTriangles": true,
+      "exactTextureBytesAndMaterials": true,
+      "allThreeSourceTextureBindingsMatch": true
+    }
+  ]
+}

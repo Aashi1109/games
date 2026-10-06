@@ -1,0 +1,74 @@
+{
+  "status": "passed",
+  "validatedAt": "2026-10-01T12:52:12.463170+00:00",
+  "files": [
+    {
+      "path": "/Users/ashishpal/Development/projects/drift/output/models/tripo-characters-master/characters-master.glb",
+      "sha256": "6308b04fed8d26f6fd991fb5c4d1c00b535a7788a78000bf53dec01490d4266d"
+    },
+    {
+      "path": "/Users/ashishpal/Development/projects/drift/output/models/tripo-guns-master/guns-master.glb",
+      "sha256": "a94efaafac3115ef8862bfacdd1c292fcc76bd2ce2ed744694e694890ea53def",
+      "standalone": {
+        "scale": 1,
+        "rotationYRadians": -1.5707963267948966,
+        "units": "source units; physical scale deferred",
+        "note": "Independent weapons from the supplied gun GLB; fit to character hands at integration."
+      }
+    }
+  ],
+  "protectedFiles": [
+    {
+      "path": "/Users/ashishpal/Development/projects/drift/output/models/tripo-characters-master/dash-body.glb",
+      "sha256": "4526f0066efc3ca303f9c83d1c54dc863b130e36fd861f9487e2ae38eacc430a"
+    },
+    {
+      "path": "/Users/ashishpal/Development/projects/drift/output/models/tripo-characters-master/ember-body.glb",
+      "sha256": "81f5a530508d98ce617eeade9cccd0853f9c858f75c17144d15b9f20d5dee540"
+    },
+    {
+      "path": "/Users/ashishpal/Development/projects/drift/output/models/tripo-characters-master/rook-body.glb",
+      "sha256": "ece76f68deb4bc5984332b0ee7278275597c9d1ba9f1aa7ddf3984cda0adc385"
+    },
+    {
+      "path": "/Users/ashishpal/Development/projects/drift/output/models/tripo-characters-master/wisp-body.glb",
+      "sha256": "2abe65804919d56b1cdc6ef96b49f0dcdfdb9cc21069a65acff44cc2cd767377"
+    },
+    {
+      "path": "/Users/ashishpal/Development/projects/drift/output/models/tripo-guns-master/dash-gun.glb",
+      "sha256": "d402ccc10f8e68d9e2e4903c16c2c32494804e79267a97583ff0cead979b37cd"
+    },
+    {
+      "path": "/Users/ashishpal/Development/projects/drift/output/models/tripo-guns-master/ember-gun.glb",
+      "sha256": "1ce00071fca186a8ea0a567feda34f18ccbc12b54d761cffc0b93f34b2642473"
+    },
+    {
+      "path": "/Users/ashishpal/Development/projects/drift/output/models/tripo-guns-master/rook-gun.glb",
+      "sha256": "06aef7b82de07f174ccdfec4c019f5e1e0f23f11e6f5b9eed965f1276e599148"
+    },
+    {
+      "path": "/Users/ashishpal/Development/projects/drift/output/models/tripo-guns-master/wisp-gun.glb",
+      "sha256": "ca3debcd3be3298c34a764f20c107c3c679c0881fa33cf084751e9769a23ca4c"
+    },
+    {
+      "path": "/Users/ashishpal/Development/projects/drift/output/models/tripo-review/tripo-character-lineup.glb",
+      "sha256": "066cc0ce43898de52543831d94b634656667c8e8e8e7e902432b3c7491d91924"
+    },
+    {
+      "path": "/Users/ashishpal/Development/projects/drift/output/models/tripo-guns-review/tripo-guns-original.glb",
+      "sha256": "ab226246542629439f484e21b0f3e3fc795272becb23bacb58871d52b1d93c97"
+    }
+  ],
+  "validationReports": [
+    "/Users/ashishpal/Development/projects/drift/output/models/tripo-characters-master/validation.json",
+    "/Users/ashishpal/Development/projects/drift/output/models/tripo-characters-master/visual-validation.json",
+    "/Users/ashishpal/Development/projects/drift/output/models/tripo-guns-master/preservation-validation.json",
+    "/Users/ashishpal/Development/projects/drift/output/models/tripo-guns-master/independent-topology-validation.json",
+    "/Users/ashishpal/Development/projects/drift/output/models/tripo-guns-master/independent-visual-validation.json"
+  ],
+  "knownSourceLimits": [
+    "Static unrigged meshes; original sculpt roughness remains.",
+    "Two inherited collinear gun triangles are recorded in the weapon topology report."
+  ],
+  "instructions": "Make byte-for-byte copies before optimization. Preserve all masters and source files."
+}

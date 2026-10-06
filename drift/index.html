@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#202b29" />
+    <meta name="description" content="A lightweight movement-first multiplayer arena. Slide, jump, and challenge your friends in your desktop browser." />
+    <title>DRIFT — Find your flow</title>
+    <link rel="icon" type="image/svg+xml" href="/mark.svg" />
+  </head>
+  <body data-screen="lobby">
+    <canvas id="game" aria-label="DRIFT 3D multiplayer arena"></canvas>
+    <div id="boot" role="status"><span class="logo">DRIFT<span>↗</span></span><span>Opening the arena…</span></div>
+    <div id="lobby" class="lobby">
+      <header class="topbar">
+        <a class="logo" href="/" aria-label="DRIFT home">DRIFT<span aria-hidden="true">↗</span></a>
+        <span class="topbar-caption">THE MOVEMENT ARENA</span>
+        <div class="header-actions"><span class="build-tag">PROTOTYPE 01</span><button class="settings-button" id="settings-open"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="2.5"/><circle cx="15" cy="17" r="2.5"/></svg>Settings</button></div>
+      </header>
+      <main class="entry">
+        <div class="eyebrow entry-kicker"><span class="accent-line"></span> SMALL GAME. BIG MOVES.</div>
+        <h1>Find your <br /><em>flow.</em></h1>
+        <p class="intro">A movement-first arena shooter.<br />Drop in solo. Bring your friends.</p>
+        <div class="entry-form">
+          <fieldset class="mode-picker"><legend>GAME MODE</legend><div id="lobby-modes" class="mode-options"></div></fieldset>
+          <div class="mode-row"><span>6 players <i aria-hidden="true">·</i> 5 min</span></div>
+          <div class="name-heading"><label class="field-label" for="player-name">PLAYER NAME</label><span id="play-context">Open room</span></div>
+          <input id="player-name" name="callsign" maxlength="16" value="Rookie" autocomplete="off" spellcheck="false" />
+          <fieldset class="class-picker"><legend>CHARACTER / CLASS</legend><div id="lobby-classes" class="class-options"></div></fieldset>
+          <p id="lobby-power-description" class="power-description" aria-live="polite"></p>
+          <button class="play-button" id="play"><span id="play-label">Enter arena</span><span class="button-arrow" aria-hidden="true">↗</span></button>
+          <div class="room-actions"><button id="create-room" class="room-button" aria-expanded="false" aria-controls="create-room-form"><span aria-hidden="true">+</span>Create room</button><button id="join-toggle" class="room-button" aria-expanded="false" aria-controls="join-form">Join friends<span aria-hidden="true">↗</span></button></div>
+          <label class="bot-fill-toggle" for="bot-fill"><input type="checkbox" id="bot-fill" checked />Fill empty slots with bots</label>
+          <div id="create-room-form" class="create-room-form" hidden>
+            <fieldset class="mode-picker"><legend>GAME MODE</legend><div id="create-modes" class="mode-options"></div></fieldset>
+            <fieldset class="team-picker" id="create-team-field" hidden><legend>TEAM</legend><div id="create-teams" class="team-options"></div></fieldset>
+            <button id="create-room-submit" class="small-button" type="button">Create room <span aria-hidden="true">↗</span></button>
+          </div>
+          <form id="join-form" hidden>
+            <label for="room-code" class="field-label">ROOM CODE</label>
+            <div class="join-row"><input id="room-code" name="room" placeholder="Enter your friend’s code" maxlength="12" autocomplete="off" spellcheck="false" pattern="[A-Za-z0-9-]{1,12}" required /><button id="join-submit" class="small-button" type="submit">Join <span aria-hidden="true">↗</span></button></div>
+          </form>
+          <p class="entry-note" id="entry-note">No account or install needed.</p>
+          <p class="error-message" id="lobby-error" role="alert"></p>
+        </div>
+      </main>
+      <aside class="map-label" id="map-preview" aria-label="Arena preview">
+        <div class="map-overline"><span class="preview-dot" aria-hidden="true"></span> EXPLORE THE ARENAS <span id="map-number">01 / 04</span></div>
+        <fieldset class="map-picker"><legend>Choose your arena<span aria-hidden="true">↗</span></legend><div id="map-choices" class="map-choices"></div></fieldset>
+        <div class="map-details" aria-live="polite" aria-atomic="true">
+          <span id="map-subtitle" class="map-subtitle"></span>
+          <div class="map-title"><strong id="map-name">Canyon Relay</strong></div>
+          <p id="map-description"></p>
+          <div class="map-traits"><span id="map-traversal">Rope routes</span><span id="map-scale">84 m arena</span></div>
+        </div>
+      </aside>
+      <footer class="lobby-footer">
+        <div class="controls-inline"><span><kbd>W A S D</kbd> Move</span><span><kbd>SHIFT</kbd> Sprint</span><span><kbd>C</kbd> Slide</span><span><kbd>SPACE</kbd> Jump / mantle</span><span><kbd>E</kbd> Ride / release rope</span><span><kbd>Q</kbd> Power / Blast Pop aim</span></div>
+        <span class="desktop-note">MOUSE + KEYBOARD <span aria-hidden="true">↗</span></span>
+      </footer>
+    </div>
+    <div id="hud" class="hud" hidden>
+      <div id="sniper-scope" class="sniper-scope" hidden aria-hidden="true"><div class="scope-lens"><i class="scope-line scope-line-horizontal"></i><i class="scope-line scope-line-vertical"></i><i class="scope-dot"></i></div></div>
+      <div class="hud-top">
+        <div class="session-block">
+          <div class="hud-brand"><span id="room-label">OPEN ARENA</span></div>
+          <div class="match-info"><span class="eyebrow" id="hud-mode">FREE-FOR-ALL</span><div class="match-numbers"><strong id="match-time">5:00</strong><span class="match-players"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><circle cx="10" cy="6" r="3"/><path d="M4 17v-2a6 6 0 0 1 12 0v2"/></svg><span id="player-count">1 / 6</span></span></div><span id="bot-count" class="bot-count" hidden></span></div>
+          <div id="hud-zones" class="hud-zones" hidden></div>
+        </div>
+        <div class="network-info"><div><span id="ping">— ms</span><span id="fps">— fps</span></div><span class="menu-hint"><kbd>ESC</kbd> Menu</span></div>
+      </div>
+      <div id="kill-feed" class="kill-feed" aria-live="polite"></div>
+      <div id="crosshair" class="crosshair" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+      <div id="damage-flash" class="damage-flash" aria-hidden="true"></div>
+      <div id="damage-direction" class="damage-direction" hidden aria-hidden="true"></div>
+      <div class="hud-bottom">
+        <div class="hud-left">
+          <div class="hud-notices">
+            <div class="death-notice" id="death-notice" hidden><span class="eyebrow">BACK IN THE FIGHT</span><strong id="respawn-count">2</strong><p>Keep your momentum.</p></div>
+            <div class="toast" id="toast" role="status"></div>
+            <div id="interact-hint" class="interact-hint" hidden><kbd>E</kbd><span id="interact-action">Ride rope</span></div>
+          </div>
+          <div class="vitals-block">
+            <div id="ability-block" class="ability-block" data-ready="true" role="group" aria-label="Blast Pop: ready. Press Q."><kbd>Q</kbd><div class="ability-label"><span id="ability-name">Blast Pop</span><strong id="ability-status">READY</strong></div><div class="ability-track" aria-hidden="true"><i id="ability-fill"></i></div></div>
+            <div id="health-block" class="health-block" data-health="healthy">
+              <div class="health-heading"><span class="hud-caption">YOUR HEALTH</span><span id="health-status" class="health-status" aria-hidden="true"></span></div>
+              <div class="health-number"><span aria-hidden="true">+</span><strong id="health">100</strong><span class="health-max">/ 100 HP</span></div>
+              <div id="health-meter" class="health-track" role="meter" aria-label="Your health" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100"><div id="health-trail" aria-hidden="true"></div><div id="health-fill"></div></div>
+            </div>
+            <div class="movement-block"><span id="movement-state">GROUNDED</span><div><strong id="speed">0</strong><small>M/S</small></div></div>
+          </div>
+        </div>
+        <div class="weapon-block"><span id="hit-marker" class="hit-marker" aria-hidden="true">HIT</span><span id="class-name" class="weapon-class">ASSAULT</span><span class="hud-caption"><span id="weapon-name">AR-01</span><span> / <span id="weapon-mode">AUTO</span></span></span><div class="ammo"><strong id="ammo">24</strong><span>/ <span id="ammo-max">24</span></span></div><span id="reload-hint"><kbd>R</kbd> RELOAD</span></div>
+      </div>
+    </div>
+    <section id="pause" class="overlay" hidden role="dialog" aria-modal="true" aria-labelledby="pause-title">
+      <div class="menu-panel">
+        <div class="panel-heading"><span class="eyebrow">MATCH IN PROGRESS</span><span class="pause-shortcut"><kbd>ESC</kbd> Menu</span></div>
+        <h2 id="pause-title">Arena <em>menu.</em></h2>
+        <p class="room-chip" id="pause-room"></p>
+        <button id="resume" class="play-button"><span>Back to the arena</span><span aria-hidden="true">↗</span></button>
+        <button id="leave" class="outline-button arena-exit"><span>Change arena<small>Leave room &amp; choose a map</small></span><span aria-hidden="true">←</span></button>
+        <p id="capture-note" class="capture-note" hidden></p>
+        <details id="class-menu" class="class-menu">
+          <summary>Change class <span aria-hidden="true">+</span></summary>
+          <fieldset class="class-picker"><legend>NEXT SPAWN</legend><div id="pause-classes" class="class-options"></div></fieldset>
+          <p id="pause-power-description" class="power-description" aria-live="polite"></p>
+        </details>
+        <p id="class-status" class="class-status" role="status" aria-live="polite"></p>
+        <button id="copy-link" class="outline-button"><span id="copy-link-label">Copy invite link</span><span aria-hidden="true">↗</span></button>
+        <p id="menu-status" class="menu-status" role="status"></p>
+        <p class="muted" id="warmup-tip">Warm up on the orange targets. Copy an invite link to bring friends.</p>
+        <div class="menu-links"><button id="pause-settings" class="text-button">Settings &amp; controls <span aria-hidden="true">↗</span></button></div>
+        <p class="muted">The match continues while this menu is open.</p>
+      </div>
+    </section>
+    <section id="settings" class="overlay" hidden role="dialog" aria-modal="true" aria-labelledby="settings-title">
+      <div class="settings-panel"><div class="panel-heading"><span class="eyebrow">SETTINGS & CONTROLS</span><button id="settings-close" class="icon-button" aria-label="Close settings">×</button></div><h2 id="settings-title">Your setup.</h2><p class="panel-intro">Make every move feel right.</p>
+        <div class="settings-group"><h3>Feel</h3><div class="setting"><label for="sensitivity">Mouse sensitivity</label><output id="sensitivity-value" for="sensitivity">1.0</output></div><input type="range" id="sensitivity" aria-label="Mouse sensitivity" min="0.2" max="2" step="0.1" value="1" /><div class="range-labels"><span>Precise</span><span>Fast</span></div><div class="setting"><label for="sound">Game sound</label><input id="sound" type="checkbox" checked /></div><div class="setting"><label for="motion">Camera motion<span class="setting-help">Head bob and movement effects</span></label><input id="motion" type="checkbox" checked /></div></div>
+        <div class="settings-group"><h3>Performance</h3><div class="setting"><label for="quality">Render quality</label><select id="quality"><option value="balanced">Balanced</option><option value="low">Low</option><option value="high">High</option></select></div></div>
+        <div class="settings-group"><h3>Controls</h3><div class="key-guide"><span>Move <kbd>W A S D</kbd></span><span>Look <kbd>MOUSE</kbd></span><span>Sprint <kbd>SHIFT</kbd></span><span>Slide / crouch <kbd>C / CTRL</kbd></span><span>Jump / mantle <kbd>SPACE</kbd></span><span>Fire / aim <kbd>LMB / RMB</kbd></span><span>Reload <kbd>R</kbd></span><span>Other powers <kbd>Q</kbd></span><span>Ride / release rope <kbd>E</kbd></span><span>Scoreboard <kbd>TAB</kbd></span><span>Blast Pop aim <kbd>Q</kbd></span><span>Blast Pop throw <kbd>LMB</kbd></span><span>Blast Pop cancel <kbd>RMB</kbd></span></div></div>
+        <p class="movement-tip"><span aria-hidden="true">↗</span> Sprint, slide, then jump to carry your momentum. Use E near a yellow rope to ride or release it. Space jumps off.</p>
+      </div>
+    </section>
+    <section class="scoreboard overlay" id="scoreboard" hidden aria-labelledby="scoreboard-title"><div class="score-panel"><div class="panel-heading"><span class="eyebrow" id="score-map">FREE-FOR-ALL</span><span class="team-score" id="score-teams" hidden></span><kbd>TAB</kbd></div><h2 id="scoreboard-title">The lineup.</h2><table><thead><tr><th>PLAYER</th><th id="score-team-header" hidden>TEAM</th><th>KILLS</th><th>DEATHS</th></tr></thead><tbody id="score-rows"></tbody></table><p class="muted">Release Tab to get back to the action.</p></div></section>
+    <div id="unsupported" class="overlay" hidden><div class="menu-panel"><h2>A desktop<br />kind of game.</h2><p id="unsupported-message">Open DRIFT in a desktop browser with a keyboard and mouse.</p></div></div>
+    <script type="module" src="/client/main.js"></script>
+  </body>
+</html>

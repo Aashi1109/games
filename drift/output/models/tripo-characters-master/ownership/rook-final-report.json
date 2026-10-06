@@ -1,0 +1,59 @@
+{
+  "status": "SOURCE_WEAPON_REASSIGNMENT_REQUIRES_CLOSED_BODY_RENDERED_REVIEW",
+  "initialSHA256": "850056cbdf850f8a54e5b713536c2d66f4004877e7f3cdeb063a0e1e868bc9b9",
+  "candidateSHA256": "fc5cbc06cec74253055d52b7c46592b05b9de9bcc47ade030a4c966cad6c1294",
+  "oldRookBodyTriangles": 478218,
+  "newRookBodyTriangles": 463538,
+  "removedWeaponSourceFaces": 14680,
+  "magazineFaces": 8112,
+  "foreendFaces": 11064,
+  "magazineOutline": [
+    [
+      0.366,
+      0.025
+    ],
+    [
+      0.38,
+      0.031
+    ],
+    [
+      0.411,
+      0.025
+    ],
+    [
+      0.411,
+      -0.025
+    ],
+    [
+      0.401,
+      -0.04
+    ],
+    [
+      0.366,
+      -0.04
+    ]
+  ],
+  "magazineDepth": [
+    0.068,
+    0.145
+  ],
+  "foreendBounds": {
+    "x": [
+      0.376,
+      0.467
+    ],
+    "y": [
+      -0.043,
+      0.038
+    ],
+    "depth": [
+      0.106,
+      0.203
+    ]
+  },
+  "skinFacesExcluded": true,
+  "existingGunFacesPreserved": true,
+  "allOtherCharactersUnchanged": true,
+  "wristBridgeAdded": false,
+  "sourceOnlyVisualReview": "Front and side original-source body renders show both gloves/wrists attached with the magazine and foreend absent. Full closed GLB review remains required."
+}

@@ -1,0 +1,187 @@
+{
+  "file": "/Users/ashishpal/Development/projects/drift/output/models/tripo-guns-master/guns-master.glb",
+  "bytes": 25343668,
+  "sha256": "a94efaafac3115ef8862bfacdd1c292fcc76bd2ce2ed744694e694890ea53def",
+  "primitives": [
+    {
+      "id": "ember-gun",
+      "bytes": 25343668,
+      "sha256": "a94efaafac3115ef8862bfacdd1c292fcc76bd2ce2ed744694e694890ea53def",
+      "triangles": 255614,
+      "vertices": 132923,
+      "weldedVertices": 127803,
+      "bounds": {
+        "min": [
+          0.026332855224609375,
+          0.059589385986328125,
+          -0.020587921142578125
+        ],
+        "max": [
+          0.08135223388671875,
+          0.2483673095703125,
+          0.5
+        ]
+      },
+      "nonfinite": 0,
+      "invalidIndices": 0,
+      "degenerateTriangles": 0,
+      "zeroNormals": 0,
+      "connectedComponents": 1,
+      "componentTriangleCounts": [
+        255614
+      ],
+      "componentDetails": [
+        {
+          "triangles": 255614,
+          "firstTriangle": 0,
+          "lastTriangle": 255613
+        }
+      ],
+      "openEdges": 0,
+      "nonmanifoldEdges": 0,
+      "inconsistentWindingEdges": 0,
+      "boundaryBounds": null,
+      "topologyDefects": [],
+      "skins": 0,
+      "animations": 0,
+      "morphTargets": 0,
+      "images": 3,
+      "materials": 1
+    },
+    {
+      "id": "dash-gun",
+      "bytes": 25343668,
+      "sha256": "a94efaafac3115ef8862bfacdd1c292fcc76bd2ce2ed744694e694890ea53def",
+      "triangles": 225166,
+      "vertices": 117274,
+      "weldedVertices": 112579,
+      "bounds": {
+        "min": [
+          0.05850982666015625,
+          -0.267578125,
+          0.030391693115234375
+        ],
+        "max": [
+          0.11075592041015625,
+          -0.0737457275390625,
+          0.455535888671875
+        ]
+      },
+      "nonfinite": 0,
+      "invalidIndices": 0,
+      "degenerateTriangles": 1,
+      "zeroNormals": 0,
+      "connectedComponents": 1,
+      "componentTriangleCounts": [
+        225166
+      ],
+      "componentDetails": [
+        {
+          "triangles": 225166,
+          "firstTriangle": 0,
+          "lastTriangle": 225165
+        }
+      ],
+      "openEdges": 0,
+      "nonmanifoldEdges": 0,
+      "inconsistentWindingEdges": 0,
+      "boundaryBounds": null,
+      "topologyDefects": [],
+      "skins": 0,
+      "animations": 0,
+      "morphTargets": 0,
+      "images": 3,
+      "materials": 1
+    },
+    {
+      "id": "wisp-gun",
+      "bytes": 25343668,
+      "sha256": "a94efaafac3115ef8862bfacdd1c292fcc76bd2ce2ed744694e694890ea53def",
+      "triangles": 198220,
+      "vertices": 102991,
+      "weldedVertices": 99104,
+      "bounds": {
+        "min": [
+          -0.099609375,
+          0.1440582275390625,
+          -0.486053466796875
+        ],
+        "max": [
+          -0.052310943603515625,
+          0.267578125,
+          0.02286529541015625
+        ]
+      },
+      "nonfinite": 0,
+      "invalidIndices": 0,
+      "degenerateTriangles": 1,
+      "zeroNormals": 0,
+      "connectedComponents": 1,
+      "componentTriangleCounts": [
+        198220
+      ],
+      "componentDetails": [
+        {
+          "triangles": 198220,
+          "firstTriangle": 0,
+          "lastTriangle": 198219
+        }
+      ],
+      "openEdges": 0,
+      "nonmanifoldEdges": 0,
+      "inconsistentWindingEdges": 0,
+      "boundaryBounds": null,
+      "topologyDefects": [],
+      "skins": 0,
+      "animations": 0,
+      "morphTargets": 0,
+      "images": 3,
+      "materials": 1
+    },
+    {
+      "id": "rook-gun",
+      "bytes": 25343668,
+      "sha256": "a94efaafac3115ef8862bfacdd1c292fcc76bd2ce2ed744694e694890ea53def",
+      "triangles": 263372,
+      "vertices": 136900,
+      "weldedVertices": 131680,
+      "bounds": {
+        "min": [
+          -0.11075592041015625,
+          -0.21624755859375,
+          -0.5
+        ],
+        "max": [
+          -0.014723777770996094,
+          -0.03655242919921875,
+          0.004851341247558594
+        ]
+      },
+      "nonfinite": 0,
+      "invalidIndices": 0,
+      "degenerateTriangles": 0,
+      "zeroNormals": 0,
+      "connectedComponents": 1,
+      "componentTriangleCounts": [
+        263372
+      ],
+      "componentDetails": [
+        {
+          "triangles": 263372,
+          "firstTriangle": 0,
+          "lastTriangle": 263371
+        }
+      ],
+      "openEdges": 0,
+      "nonmanifoldEdges": 0,
+      "inconsistentWindingEdges": 0,
+      "boundaryBounds": null,
+      "topologyDefects": [],
+      "skins": 0,
+      "animations": 0,
+      "morphTargets": 0,
+      "images": 3,
+      "materials": 1
+    }
+  ]
+}

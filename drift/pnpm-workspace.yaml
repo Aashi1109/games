@@ -1,0 +1,6 @@
+# Keep dependencies self-contained when Docker copies node_modules into the runtime image.
+enableGlobalVirtualStore: false
+
+allowBuilds:
+  esbuild: true
+  workerd: true

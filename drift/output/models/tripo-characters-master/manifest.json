@@ -1,0 +1,141 @@
+{
+  "source": {
+    "file": "/Users/ashishpal/Development/projects/drift/output/models/tripo-review/tripo-character-lineup.glb",
+    "sha256": "066cc0ce43898de52543831d94b634656667c8e8e8e7e902432b3c7491d91924"
+  },
+  "pieces": [
+    {
+      "id": "ember-body",
+      "file": "/Users/ashishpal/Development/projects/drift/output/models/tripo-characters-master/ember-body.glb",
+      "sourceTriangleIds": "/Users/ashishpal/Development/projects/drift/output/models/tripo-characters-master/ownership/ember-body.u32",
+      "sourceVertexIds": "/Users/ashishpal/Development/projects/drift/output/models/tripo-characters-master/ownership/ember-body-vertices.u32",
+      "sourceTriangles": 372078,
+      "addedTriangles": 870,
+      "closureTriangles": 870,
+      "closureMethods": [
+        "3d-minimum-area",
+        "3d-minimum-area",
+        "3d-minimum-area",
+        "3d-minimum-area",
+        "3d-minimum-area"
+      ],
+      "reconstructedParts": [],
+      "boundaryLoops": [
+        192,
+        212,
+        98,
+        172,
+        206
+      ],
+      "sha256": "81f5a530508d98ce617eeade9cccd0853f9c858f75c17144d15b9f20d5dee540",
+      "copiedUnchangedFrom": "/Users/ashishpal/Development/projects/drift/output/models/tripo-master/ember-body.glb"
+    },
+    {
+      "id": "wisp-body",
+      "file": "/Users/ashishpal/Development/projects/drift/output/models/tripo-characters-master/wisp-body.glb",
+      "sourceTriangleIds": "/Users/ashishpal/Development/projects/drift/output/models/tripo-characters-master/ownership/wisp-body.u32",
+      "sourceVertexIds": "/Users/ashishpal/Development/projects/drift/output/models/tripo-characters-master/ownership/wisp-body-vertices.u32",
+      "sourceTriangles": 448069,
+      "addedTriangles": 809,
+      "closureTriangles": 809,
+      "closureMethods": [
+        "3d-minimum-area",
+        "3d-minimum-area",
+        "3d-minimum-area",
+        "3d-minimum-area",
+        "3d-minimum-area",
+        "3d-minimum-area"
+      ],
+      "reconstructedParts": [],
+      "boundaryLoops": [
+        212,
+        136,
+        70,
+        73,
+        272,
+        58
+      ],
+      "sha256": "2abe65804919d56b1cdc6ef96b49f0dcdfdb9cc21069a65acff44cc2cd767377",
+      "copiedUnchangedFrom": "/Users/ashishpal/Development/projects/drift/output/models/tripo-master/wisp-body.glb"
+    },
+    {
+      "id": "dash-body",
+      "file": "/Users/ashishpal/Development/projects/drift/output/models/tripo-characters-master/dash-body.glb",
+      "sourceTriangleIds": "/Users/ashishpal/Development/projects/drift/output/models/tripo-characters-master/ownership/dash-body.u32",
+      "sourceVertexIds": "/Users/ashishpal/Development/projects/drift/output/models/tripo-characters-master/ownership/dash-body-vertices.u32",
+      "sourceTriangles": 420676,
+      "addedTriangles": 682,
+      "closureTriangles": 682,
+      "closureMethods": [
+        "3d-minimum-area",
+        "3d-minimum-area",
+        "3d-minimum-area",
+        "3d-minimum-area"
+      ],
+      "reconstructedParts": [],
+      "boundaryLoops": [
+        85,
+        146,
+        162,
+        297
+      ],
+      "sha256": "4526f0066efc3ca303f9c83d1c54dc863b130e36fd861f9487e2ae38eacc430a",
+      "copiedUnchangedFrom": "/Users/ashishpal/Development/projects/drift/output/models/tripo-master/dash-body.glb"
+    },
+    {
+      "id": "rook-body",
+      "file": "/Users/ashishpal/Development/projects/drift/output/models/tripo-characters-master/rook-body.glb",
+      "sourceTriangleIds": "/Users/ashishpal/Development/projects/drift/output/models/tripo-characters-master/ownership/rook-body.u32",
+      "sourceVertexIds": "/Users/ashishpal/Development/projects/drift/output/models/tripo-characters-master/ownership/rook-body-vertices.u32",
+      "sourceTriangles": 463537,
+      "addedTriangles": 215,
+      "closureTriangles": 215,
+      "closureMethods": [
+        "3d-minimum-area",
+        "3d-minimum-area"
+      ],
+      "reconstructedParts": [],
+      "boundaryLoops": [
+        153,
+        66
+      ],
+      "sha256": "ece76f68deb4bc5984332b0ee7278275597c9d1ba9f1aa7ddf3984cda0adc385",
+      "copiedUnchangedFrom": "/Users/ashishpal/Development/projects/drift/output/models/tripo-master/rook-body.glb"
+    }
+  ],
+  "combinedFile": "/Users/ashishpal/Development/projects/drift/output/models/tripo-characters-master/characters-master.glb",
+  "repairedSourceTriangleIds": [
+    1930308
+  ],
+  "repairReason": "Remove pre-existing dangling nonmanifold final triangle on Dash; original asset preserved.",
+  "packKind": "character-body-masters",
+  "sourceOwnership": {
+    "file": "/Users/ashishpal/Development/projects/drift/output/models/tripo-characters-master/ownership/final-source-partition.npy",
+    "sha256": "3b090f39725ace549e1268dd4d2ec0a36df6eed17e5ac8024ea138b28a9b9fa1",
+    "copiedFrom": "/Users/ashishpal/Development/projects/drift/output/models/tripo-working/triangle-ownership.npy",
+    "scope": "Full final eight-way source assignment retained as provenance; old gun meshes superseded."
+  },
+  "refinementEvidence": [
+    {
+      "file": "/Users/ashishpal/Development/projects/drift/output/models/tripo-characters-master/ownership/rook-final-report.json",
+      "sha256": "e7066df07d0c21efdcfae8b9d13abeed66e163367d7b09ce41b2e436a899d0d8",
+      "copiedFrom": "/Users/ashishpal/Development/projects/drift/output/models/tripo-working/color/cut-rook-body-clean/preserved-fc5cbc06cec7/report.json"
+    },
+    {
+      "file": "/Users/ashishpal/Development/projects/drift/output/models/tripo-characters-master/ownership/rook-final-confirmed-weapon-source-faces.u32",
+      "sha256": "904e538e12f2f2340e71461cd793d5ac6785188609b20f678a3a608a856ad91c",
+      "copiedFrom": "/Users/ashishpal/Development/projects/drift/output/models/tripo-working/color/cut-rook-body-clean/preserved-fc5cbc06cec7/confirmed-weapon-source-faces.u32"
+    },
+    {
+      "file": "/Users/ashishpal/Development/projects/drift/output/models/tripo-characters-master/ownership/rook-final-triangle-ownership-candidate.npy",
+      "sha256": "fc5cbc06cec74253055d52b7c46592b05b9de9bcc47ade030a4c966cad6c1294",
+      "copiedFrom": "/Users/ashishpal/Development/projects/drift/output/models/tripo-working/color/cut-rook-body-clean/preserved-fc5cbc06cec7/triangle-ownership-candidate.npy"
+    }
+  ],
+  "combinedSha256": "6308b04fed8d26f6fd991fb5c4d1c00b535a7788a78000bf53dec01490d4266d",
+  "sourceWorkingPack": {
+    "file": "/Users/ashishpal/Development/projects/drift/output/models/tripo-master/split-master.glb",
+    "sha256": "95e8ba8d98c51f579e4a6854e0289975173665c4369a0f47986a01e69c265c01",
+    "status": "superseded mixed working pack; extracted old weapons are not authoritative"
+  }
+}

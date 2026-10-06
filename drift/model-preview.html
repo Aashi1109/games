@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DRIFT — Character model review</title>
+  <style>
+    :root { font-family: Inter, ui-sans-serif, system-ui, sans-serif; color: #252a2b; background: #efefec; }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    #render { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+    main { position: relative; max-width: 1512px; margin: auto; padding: 30px 36px 40px; }
+    header { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 24px; }
+    .eyebrow { font-size: 11px; letter-spacing: .16em; font-weight: 750; text-transform: uppercase; color: #666b6b; }
+    h1 { font-size: clamp(26px, 3vw, 38px); letter-spacing: -.045em; margin: 7px 0; font-weight: 800; }
+    header p { margin: 0; color: #666b6b; font-size: 13px; line-height: 1.5; }
+    button, a { font: inherit; }
+    button, .download { padding: 9px 12px; border: 1px solid #bdc1bd; background: #f7f7f3; color: inherit; border-radius: 4px; font-size: 12px; cursor: pointer; text-decoration: none; }
+    button:hover, .download:hover { background: #e2e5df; }
+    button[aria-pressed="true"], button[aria-selected="true"] { background: #283230; border-color: #283230; color: #fff; }
+    :focus-visible { outline: 3px solid #bf6b3c; outline-offset: 3px; }
+    .review-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 12px; }
+    .character-tabs, .tools { display: flex; gap: 6px; flex-wrap: wrap; }
+    .character-tabs button { min-width: 90px; font-weight: 700; padding: 11px 18px; }
+    .comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; border: 1px solid #bec1bc; border-radius: 6px; overflow: hidden; }
+    .panel-heading { display: flex; justify-content: space-between; gap: 12px; padding: 13px 18px; background: #f8f8f5; border-bottom: 1px solid #c7c9c4; }
+    .panel-heading strong { font-size: 12px; letter-spacing: .03em; }
+    .panel-heading span { font-size: 11px; color: #656b68; }
+    .reference-view, .hero-view { height: clamp(500px, calc(100svh - 300px), 740px); }
+    .reference-view { display: flex; align-items: center; justify-content: center; background: #bfc0c1; overflow: hidden; }
+    .reference-crop { position: relative; height: 100%; aspect-ratio: 365 / 1024; overflow: hidden; }
+    .reference-crop img { position: absolute; display: block; max-width: none; }
+    .viewport { position: relative; touch-action: none; cursor: grab; }
+    .viewport:active { cursor: grabbing; }
+    .view-label { position: absolute; top: 13px; left: 16px; z-index: 1; color: #565d58; font-size: 10px; font-weight: 700; letter-spacing: .08em; pointer-events: none; }
+    .view-help { position: absolute; bottom: 15px; left: 16px; right: 16px; text-align: center; color: #575d58; font-size: 11px; pointer-events: none; }
+    .review-footer { display: flex; align-items: center; justify-content: space-between; gap: 20px; background: #f8f8f5; border: 1px solid #bec1bc; border-top: 0; padding: 13px 18px; font-size: 12px; }
+    .review-footer strong { display: block; margin-bottom: 4px; }
+    .review-footer span { color: #666d69; }
+    .review-footer .download { white-space: nowrap; }
+    .section-title { margin: 34px 0 14px; display: flex; align-items: end; justify-content: space-between; gap: 18px; }
+    .section-title h2 { margin: 0; font-size: 22px; letter-spacing: -.03em; }
+    .section-title p { margin: 0; font-size: 12px; color: #68706a; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+    article { border: 1px solid #c2c6bf; border-radius: 6px; overflow: hidden; }
+    .card-header { padding: 17px 18px 13px; background: #f8f8f4; border-top: 3px solid var(--accent); display: flex; justify-content: space-between; align-items: center; gap: 14px; }
+    .card-header h3 { margin: 2px 0; font-size: 25px; letter-spacing: -.035em; }
+    .card-header p { margin: 0; color: #68716a; font-size: 12px; }
+    .character-view { height: 500px; }
+    .weapon-view { height: 235px; border-top: 1px solid #c2c6bf; }
+    .card-footer { background: #f8f8f4; padding: 16px; font-size: 12px; }
+    .stats { color: #626b64; margin-bottom: 13px; }
+    .downloads { display: flex; gap: 8px; }
+    .download { text-align: center; }
+    .downloads .download { flex: 1; }
+    footer { display: flex; gap: 16px; justify-content: space-between; flex-wrap: wrap; color: #657065; font-size: 11px; margin-top: 20px; line-height: 1.6; }
+    #status { margin-top: 12px; font-size: 13px; color: #87582f; }
+    @media (min-width: 1000px) { .grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } .card-header { align-items: start; flex-direction: column; gap: 10px; } .character-view { height: 440px; } .weapon-view { height: 170px; } }
+    @media (max-width: 900px) { main { padding: 22px; } .reference-view, .hero-view { height: 570px; } header { align-items: start; flex-direction: column; } .review-toolbar { align-items: start; flex-direction: column; } .character-view { height: 450px; } }
+    @media (max-width: 620px) { main { padding: 18px 12px; } .reference-view, .hero-view { height: 405px; } .panel-heading { padding: 11px 9px; flex-direction: column; gap: 4px; } .panel-heading strong { font-size: 11px; } .panel-heading span { font-size: 10px; } .grid { grid-template-columns: 1fr; } .character-view { height: 490px; } .review-footer { align-items: start; flex-direction: column; gap: 12px; } .section-title { align-items: start; flex-direction: column; gap: 6px; } .character-tabs button { min-width: 70px; padding: 10px 13px; } .view-help { font-size: 10px; } }
+  </style>
+</head>
+<body>
+  <canvas id="render" aria-hidden="true"></canvas>
+  <main>
+    <header>
+      <div><div class="eyebrow">DRIFT / CHARACTER MODEL REVIEW</div><h1>Reference beside the real model.</h1><p>Compare the approved design with the actual geometry. Rotate the model to inspect every angle.</p></div>
+      <div class="eyebrow">STANDALONE PREVIEW · NOT IN THE GAME</div>
+    </header>
+    <section aria-label="Reference and actual model comparison">
+      <div class="review-toolbar">
+        <div class="character-tabs" role="tablist" aria-label="Choose character">
+          <button role="tab" id="tab-assault" data-character="assault" aria-selected="true" aria-controls="character-comparison" type="button">Ember</button>
+          <button role="tab" id="tab-sniper" data-character="sniper" aria-selected="false" aria-controls="character-comparison" tabindex="-1" type="button">Wisp</button>
+          <button role="tab" id="tab-scout" data-character="scout" aria-selected="false" aria-controls="character-comparison" tabindex="-1" type="button">Dash</button>
+          <button role="tab" id="tab-heavy" data-character="heavy" aria-selected="false" aria-controls="character-comparison" tabindex="-1" type="button">Rook</button>
+        </div>
+        <div class="tools" aria-label="Model view controls"><button id="detail" type="button" aria-pressed="false">Face detail</button><button id="front" type="button" aria-pressed="false">Front</button><button id="quarter" type="button" aria-pressed="true">Three-quarter</button><button id="side" type="button" aria-pressed="false">Side</button><button id="reset" type="button">Reset</button><button id="wireframe" type="button" aria-pressed="false">Wireframe</button></div>
+      </div>
+      <div id="character-comparison" role="tabpanel" aria-labelledby="tab-assault">
+        <div class="comparison">
+          <div><div class="panel-heading"><strong>APPROVED REFERENCE</strong><span>Original concept image</span></div><div class="reference-view"><div class="reference-crop"><img id="reference-image" src="/output/models/reference.png" alt="Approved Ember character concept"></div></div></div>
+          <div><div class="panel-heading"><strong>ACTUAL 3D MODEL</strong><span id="hero-name">Ember · live mesh</span></div><div id="hero-view" class="viewport hero-view" tabindex="0" role="img" aria-label="Rotate Ember actual 3D model with mouse or left and right arrow keys"><span class="view-help">Drag to orbit · Scroll to zoom · Arrow keys to rotate</span></div></div>
+        </div>
+        <div class="review-footer"><div><strong id="hero-stats">Preparing model…</strong><span>Actual 3D geometry · Vertex-painted surfaces · Ember optimization deferred</span></div><a id="hero-download" class="download" href="/output/models/assault-character.glb" download>Download Ember .glb ↓</a></div>
+      </div>
+    </section>
+    <div class="section-title"><h2>All characters & weapons</h2><p>Each preview rotates independently. Downloads contain actual 3D geometry.</p></div>
+    <section class="grid" id="models" aria-label="Characters and their weapons"></section>
+    <p id="status" role="status">Preparing model preview…</p>
+    <footer><span>Actual 3D models · Flat vertex colors · No textures</span><span>Standalone review · Gameplay files unchanged</span></footer>
+  </main>
+  <script type="module" src="/client/model-preview.js"></script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+{
+  "name": "drift-arena",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.9.0",
+  "engines": {
+    "node": "24.x"
+  },
+  "scripts": {
+    "dev": "node server/index.js",
+    "start": "node server/index.js --production",
+    "build": "vite build",
+    "deploy": "wrangler deploy",
+    "test": "node --test test/*.test.js"
+  },
+  "dependencies": {
+    "ws": "8.22.0"
+  },
+  "devDependencies": {
+    "@cloudflare/containers": "0.3.7",
+    "three": "0.186.1",
+    "vite": "8.3.1",
+    "wrangler": "4.145.0"
+  }
+}

@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { makeMesh } from './character-geometry.js';
-import { EMBER_FRAME, fromReference, triangulateReference, referenceSurface, referencePatch, worldSurface } from './reference-head-geometry.js';
+import { fromReference, triangulateReference, referencePatch, worldSurface } from './reference-head-geometry.js';
 import { EMBER_FACE_CONTOUR, EMBER_EYES, EMBER_FACE_LANDMARKS } from './ember-reference-face-data.js';
 import { addEmberHairVolume } from './ember-hair-volume.js';
 import { EMBER_PAINT } from './ember-reference-paint.js';
@@ -37,7 +37,7 @@ function skin(parts) {
   // Continuous jaw, temples, cranium and rear skull. Rear rows are shaped in
   // anatomical world axes, not a flat extrusion of the source silhouette.
   const front = EMBER_FACE_CONTOUR.map(p=>fromReference(p));
-  const side = front.map(([x,y,z])=>[x*.92,y,y<1.61?.038:y>1.79?.036:.071]);
+  const side = front.map(([x,y])=>[x*.92,y,y<1.61?.038:y>1.79?.036:.071]);
   const back = side.map(([x,y,z])=>[x*.65,y+(1.7-y)*.07,z+(y>1.61&&y<1.79?.049:.014)]);
   const n=front.length, vertices=[...front,...side,...back,[0,1.705,.133]], faces=[];
   for(let ring=0;ring<2;ring++)for(let i=0;i<n;i++){const j=(i+1)%n,a=ring*n;faces.push([a+i,a+j,a+n+i],[a+j,a+n+j,a+n+i]);}

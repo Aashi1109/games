@@ -1,0 +1,159 @@
+DRIFT SOUND CREDITS
+
+Footsteps are licensed under Creative Commons Attribution 4.0 International
+(CC BY 4.0): https://creativecommons.org/licenses/by/4.0/
+All other sounds below are dedicated under CC0 1.0:
+https://creativecommons.org/publicdomain/zero/1.0/
+
+The original authors do not endorse Drift. The adaptations and processing are
+listed below. Freesound sources were downloaded as public HQ MP3 previews;
+PCM WAV conversion does not add source fidelity.
+
+The prepared OpenSpades clips were obtained at this pinned source revision:
+https://github.com/DeathByDenim/openspades-free-pak/tree/1e6b28721a2e5e51f84a572d101079bf186c66d5
+Its per-file credits identify the original CC0 recordings:
+https://github.com/DeathByDenim/openspades-free-pak/blob/1e6b28721a2e5e51f84a572d101079bf186c66d5/License/Credits-pak001-Free.md
+
+FILES, AUTHORS, SOURCES AND CHANGES
+
+fire-assault.wav
+  Original: Sounds/Weapons/SMG/FireStereo.opus; AR-15/D_24P
+  Creator: Ben Jaszczak, Brian Nelson, Kevin Heras, Matthew Nanney; OpenSpades edit
+  Source: https://opengameart.org/content/the-free-firearm-sound-library
+  License: CC0 1.0
+  Changes: Mono 44.1 kHz PCM; leading/trailing silence trimmed; peak normalization; edge fades. Retained the first 65 ms attack, then applied a cosine fade ending at 145 ms so recorded reflections do not overlap during automatic fire.
+
+fire-sniper.wav
+  Original: Sounds/Weapons/Rifle/FireStereo.opus; B_16P
+  Creator: Ben Jaszczak, Brian Nelson, Kevin Heras, Matthew Nanney; OpenSpades edit
+  Source: https://opengameart.org/content/the-free-firearm-sound-library
+  License: CC0 1.0
+  Changes: Mono 44.1 kHz PCM; leading/trailing silence trimmed; peak normalization; edge fades. Retained the first 70 ms attack; smoothly raised the recording's natural tail by 5 dB from 100–450 ms, tapering back to the original level at 900 ms. No added shot repetitions.
+
+fire-scout.wav
+  Original: Sounds/Weapons/Rifle/Fire.opus; A_42P
+  Creator: Ben Jaszczak, Brian Nelson, Kevin Heras, Matthew Nanney; OpenSpades edit
+  Source: https://opengameart.org/content/the-free-firearm-sound-library
+  License: CC0 1.0
+  Changes: Mono 44.1 kHz PCM; excerpt if noted; leading/trailing silence trimmed; peak normalization; edge fades.
+
+fire-heavy.wav
+  Original: Sounds/Weapons/SMG/V2Local1.opus; AK-47/C_28P
+  Creator: Ben Jaszczak, Brian Nelson, Kevin Heras, Matthew Nanney; OpenSpades edit
+  Source: https://opengameart.org/content/the-free-firearm-sound-library
+  License: CC0 1.0
+  Changes: Mono 44.1 kHz PCM; excerpt if noted; leading/trailing silence trimmed; peak normalization; edge fades.
+
+reload.wav
+  Original: assaultriflereload1_0.wav
+  Creator: SpringySpringo
+  Source: https://opengameart.org/content/gun-reload-sounds
+  License: CC0 1.0
+  Changes: Mono 44.1 kHz PCM; excerpt if noted; leading/trailing silence trimmed; peak normalization; edge fades.
+
+reload-alternate.wav
+  Original: Sounds/Weapons/Rifle/ReloadLocal.opus
+  Creator: zer0_sol; OpenSpades edit
+  Source: https://opengameart.org/content/handgun-reload-sound-effect
+  License: CC0 1.0
+  Changes: Mono 44.1 kHz PCM; excerpt if noted; leading/trailing silence trimmed; peak normalization; edge fades.
+
+bolt.wav
+  Original: Sounds/Weapons/Rifle/RaiseLocal.opus
+  Creator: SpringySpringo; OpenSpades edit
+  Source: https://opengameart.org/content/gun-reload-sounds
+  License: CC0 1.0
+  Changes: Mono 44.1 kHz PCM; excerpt if noted; leading/trailing silence trimmed; peak normalization; edge fades.
+
+dry-fire.wav
+  Original: Sounds/Weapons/DryFire.opus (misc_17)
+  Creator: rubberduck; OpenSpades edit
+  Source: https://opengameart.org/content/100-cc0-metal-and-wood-sfx
+  License: CC0 1.0
+  Changes: Mono 44.1 kHz PCM; excerpt if noted; leading/trailing silence trimmed; peak normalization; edge fades.
+
+round-start.wav
+  Original: Audio/confirmation_002.ogg
+  Creator: Kenney
+  Source: https://kenney.nl/assets/interface-sounds
+  License: CC0 1.0
+  Changes: Mono 44.1 kHz PCM; excerpt if noted; leading/trailing silence trimmed; peak normalization; edge fades.
+
+respawn.wav
+  Original: Audio/forceField_004.ogg
+  Creator: Kenney
+  Source: https://kenney.nl/assets/sci-fi-sounds
+  License: CC0 1.0
+  Changes: Mono 44.1 kHz PCM; excerpt if noted; leading/trailing silence trimmed; peak normalization; edge fades.
+
+footstep-1.wav
+  Original: concrete_step_2.wav
+  Creator: movingplaid / Freesound
+  Source: https://freesound.org/people/movingplaid/sounds/76188/
+  License: CC BY 4.0
+  Changes: Public HQ MP3 preview; excerpt 0.000–0.358s; mono 44.1 kHz / PCM16; 65 Hz high-pass, 2600 Hz low-pass; edge fades; peak set to -19 dBFS.
+
+footstep-2.wav
+  Original: concrete_step_1.wav
+  Creator: movingplaid / Freesound
+  Source: https://freesound.org/people/movingplaid/sounds/76187/
+  License: CC BY 4.0
+  Changes: Public HQ MP3 preview; excerpt 0.000–0.305s; mono 44.1 kHz / PCM16; 65 Hz high-pass, 2600 Hz low-pass; edge fades; peak set to -19 dBFS.
+
+slide.wav
+  Original: 12-Sliding walk carpet.wav
+  Creator: 14GPanskaHonc_Petr / Freesound
+  Source: https://freesound.org/people/14GPanskaHonc_Petr/sounds/419177/
+  License: CC0 1.0
+  Changes: Public HQ MP3 preview; excerpt 1.720–2.370s; mono 44.1 kHz / PCM16; 65 Hz high-pass, 2900 Hz low-pass; edge fades; peak set to -20 dBFS.
+
+power-echo.wav
+  Original: Soft Echo Sweep.wav (public HQ MP3 previews)
+  Creator: Rob_Marion (formerly bay_area_bob)
+  Source: https://freesound.org/people/Rob_Marion/sounds/417560/
+  License: CC0 1.0
+  Changes: Source excerpt 0.65–2.3 s; tempo 2.8x; high-pass 320 Hz and low-pass 3.2 kHz; mono 44.1 kHz/16-bit PCM; tapered edges; gain capped by both peak and RMS targets.
+
+power-dash.wav
+  Original: Swinging staff whoosh (low) 04.wav (public HQ MP3 previews)
+  Creator: Nightflame
+  Source: https://freesound.org/people/Nightflame/sounds/422494/
+  License: CC0 1.0
+  Changes: Full source; high-pass 140 Hz and low-pass 4.2 kHz; mono 44.1 kHz/16-bit PCM; tapered edges; gain capped by both peak and RMS targets.
+
+power-shield.wav
+  Original: Air release + Soft UI Button Click (public HQ MP3 previews)
+  Creator: davidlay1 ; Jummit
+  Source: https://freesound.org/people/davidlay1/sounds/416080/ ; https://freesound.org/people/Jummit/sounds/528561/
+  License: CC0 1.0
+  Changes: First 0.38 s air-release excerpt, shaped swell; low-pitched soft click layered at 30 ms; band limiting; mono 44.1 kHz/16-bit PCM; tapered edges; gain capped by both peak and RMS targets.
+
+power-pop.wav
+  Original: pop out, bubble, soft bursting + Air release (public HQ MP3 previews)
+  Creator: chaferwitt ; davidlay1
+  Source: https://freesound.org/people/chaferwitt/sounds/776443/ ; https://freesound.org/people/davidlay1/sounds/416080/
+  License: CC0 1.0
+  Changes: Recorded soft pop + very short air release; band limiting; mono 44.1 kHz/16-bit PCM; tapered edges; gain capped by both peak and RMS targets.
+
+hit.wav
+  Original: Hitmarker Sound Effect; public HQ MP3 preview
+  Creator: User391915396
+  Source: https://freesound.org/people/User391915396/sounds/570335/
+  License: CC0 1.0
+  Changes: Mono 44.1 kHz 16-bit PCM; silence edges trimmed; 2 ms attack/30 ms maximum tail fade; high-pass 160 Hz, low-pass 2800 Hz; gain -19.83 dB constrained by quiet peak/RMS targets (no full-scale normalization); peak cap -21 dBFS and RMS cap -32 dBFS.
+
+hurt.wav
+  Original: Audio/impactSoft_medium_002.ogg
+  Creator: Kenney
+  Source: https://kenney.nl/assets/impact-sounds
+  License: CC0 1.0
+  Changes: Mono 44.1 kHz 16-bit PCM; silence edges trimmed; 2 ms attack/30 ms maximum tail fade; high-pass 60 Hz, low-pass 1300 Hz; gain -16.02 dB constrained by quiet peak/RMS targets (no full-scale normalization); peak cap -16 dBFS and RMS cap -29 dBFS.
+
+Footstep source recordings:
+  footstep-1.wav adapts "concrete_step_2.wav" by movingplaid.
+  footstep-2.wav adapts "concrete_step_1.wav" by movingplaid.
+  These two adaptations remain available under CC BY 4.0.
+
+Weapon class names describe gameplay roles. Scout uses the A_42P rifle report
+and Heavy uses an AK-47 recording; these are not claims that the recordings
+are of an authentic SMG or LMG.

@@ -2,6 +2,12 @@
 
 A lightweight desktop-browser multiplayer FPS prototype. Apex-inspired momentum, quick arena matches, and four original procedural maps. Built with Three.js, native browser APIs, and a small Node/WebSocket server. No accounts, external asset downloads, database, or UI framework.
 
+## Open from the collection
+
+For deployment with every game, use the [collection's root Dockerfile](../README.md#single-container-deployment). It builds this game and serves it at `/drift/` alongside the other eighteen games on one port. The Docker and Cloudflare instructions below deploy DRIFT alone.
+
+Run `npm ci` and `npm run dev` at the collection root and choose **Play DRIFT**. For production, run `npm run build` then `npm start`. It opens at `/drift/` on the collection host. The collection starts and stops its private backend automatically and forwards multiplayer connections on the same origin. The standalone workflow below remains available.
+
 ## Run locally
 
 Requires Node 24 LTS and pnpm 11.9.0 (pinned in `package.json`). If you use nvm, run `nvm use` to select the project's Node version from `.nvmrc`.
@@ -84,7 +90,7 @@ Chain sprint → crouch → jump to preserve momentum. Slides build a short push
 
 ## Powers and style
 
-Each character has one power, checked by the server and shown on the Q cooldown meter. Powers cannot activate while dead or attached to a rope. Cooldowns carry through deaths and class changes, and reset for a new round.
+Each character has one power, checked by the server and shown on the bottom-center Q meter. The meter lights up when ready, shows its countdown while recharging, and identifies active powers. Powers cannot activate while dead or attached to a rope. Cooldowns carry through deaths and class changes, and reset for a new round.
 
 | Character | Power | Cooldown |
 | --- | --- | --- |
@@ -129,6 +135,8 @@ The visual treatment uses the [Deadshot reference study](docs/visual-reference.m
 
 Rooms fill to four fighters with AI: one human starts with three opponents, two humans get two, and four or more humans play without AI. Friends always take priority, up to six humans per room. AI is marked on overhead health bars, the scoreboard, and the kill feed. Empty rooms are removed when the last human leaves.
 
+Choose **Easy**, **Normal**, or **Hard** bot difficulty before entering an arena or creating a room. Easy is the default, with slower reactions, less accurate tracking, and more breathing room between attacks. Normal increases the challenge; Hard is closest to the original bots. Your selection is saved on this browser. Quickplay matches the selected difficulty and bot-fill setting; joining an existing room uses that room's settings.
+
 AI uses the same movement, cover checks, ammunition, damage, kills, reloads, and respawns as players. Bots patrol ground routes, react after a delay, turn gradually, and fire in bursts with imperfect aim. They can fight each other as well as humans. These are lightweight practice opponents; they do not plan advanced rope or rooftop routes. Server tests can set `createGameServer({ botTarget: 0 })` for a room without AI.
 
 ## Implemented
@@ -144,7 +152,9 @@ AI uses the same movement, cover checks, ammunition, damage, kills, reloads, and
 - Server-controlled movement, cover-aware ray hits, damage, kills, and scores.
 - 60 Hz simulation, 20 Hz server snapshots, client prediction and reconciliation, and interpolated movement rendering. Stance height, mantle steps, weapon tilt and remote crouching ease smoothly; camera motion can disable decorative bob, roll and landing dip.
 - Mouse sensitivity, low/balanced/high rendering, audio and camera-motion settings.
-- Procedural arenas and synthesized sound, with shared character and gun texture atlases.
+- Procedural arenas, recorded game audio, and shared character and gun texture atlases.
+
+Audio stays focused on weapon fire and reloads, footsteps/sliding, hit and damage feedback, each character's power, round starts, and respawns. The 19 bundled WAVs total about 957 KB and load from the game host. Reload handling follows each class's actual timer, while nearby opponents use distance attenuation and stereo direction. Sound stops on mute, pause, tab blur, or leaving a match. Source credits and licenses ship in [public/audio/SOURCES.txt](public/audio/SOURCES.txt).
 
 ## Verification
 
@@ -184,5 +194,7 @@ Four maps and four weapon classes. This is an original simplified movement syste
 - `client/surfaces.js`: world-scaled procedural surface textures and physical material finishes.
 - `client/daylight.js`: shared generated daylight sky and reflections.
 - `client/shot-effects.js`: pooled shot streaks, impact bursts, and fading surface marks.
+- `client/audio.js`: approved sample loading, playback, reload timing, and audio cleanup.
+- `client/audio-feedback.js`: live simulation cues and nearby player audio without reconciliation duplicates.
 - `client/main.js`: controls, network prediction, camera, sound, and interface.
 - `client/ui.css`: lobby, HUD, menus, settings, scoreboard.

@@ -28,12 +28,12 @@ async function server(t, options = {}) {
   return game;
 }
 
-async function join(t, game, room, classId = 'assault') {
+async function join(t, game, room, classId = 'assault', extra = {}) {
   const ws = new WebSocket(`ws://127.0.0.1:${game.port}/ws`);
   await once(ws, 'open');
   t.after(() => ws.terminate());
   const welcome = receive(ws, 'welcome');
-  ws.send(JSON.stringify({ type: 'join', room, name: classId, classId }));
+  ws.send(JSON.stringify({ type: 'join', room, name: classId, classId, ...extra }));
   return { ws, welcome: await welcome };
 }
 
@@ -237,7 +237,7 @@ test('round reset clears world effects, shields and cooldowns for every particip
 
 test('AI uses the authoritative power path and its world effect disappears when a human replaces it', async (t) => {
   const game = await server(t, { botTarget: 2 });
-  const entry = await join(t, game, 'bot-power');
+  const entry = await join(t, game, 'bot-power', 'assault', { botDifficulty: 'hard' });
   const room = game.rooms.get('bot-power');
   const human = room.peers.get(entry.welcome.id);
   const bot = [...room.peers.values()].find((peer) => peer.bot);

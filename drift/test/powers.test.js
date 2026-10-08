@@ -237,7 +237,7 @@ test('cover and closer players still stop bullets before a shield or Echo behind
 test('bots request powers through normal inputs and can be fooled by a visible Echo', () => {
   for (const classId of ['assault', 'sniper', 'scout', 'heavy']) {
     const bot = player(classId); const enemy = player('assault', 'enemy'); enemy.z = -8;
-    const controller = createBotController(map); const original = structuredClone(bot);
+    const controller = createBotController(map, 0, 'hard'); const original = structuredClone(bot);
     let requested = false;
     for (let tick = 0; tick < 90; tick++) requested ||= controller.update(bot, [bot, enemy], STEP).ability;
     assert.ok(requested, `${classId} should request its own power after reacting`);

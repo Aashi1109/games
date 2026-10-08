@@ -1,8 +1,8 @@
 import { EYE_HEIGHT, PLAYER_HEIGHT, RADIUS, STEP, traceShot } from '../shared/simulation.js';
 import { getClass } from '../shared/classes.js';
+import { DEFAULT_BOT_DIFFICULTY, getBotDifficulty } from '../shared/bot-difficulty.js';
 
 const DECISION_INTERVAL = 0.12;
-const TURN_SPEED = 2.6;
 const GRID_SPACING = 2;
 const navigation = new WeakMap();
 const clamp = (value, low, high) => Math.max(low, Math.min(high, value));
@@ -115,7 +115,8 @@ function canSee(player, target, players, map) {
 }
 
 /** Lightweight server input producer. Never changes health, position, or ammo. */
-export function createBotController(map, seed = 0) {
+export function createBotController(map, seed = 0, difficulty = DEFAULT_BOT_DIFFICULTY) {
+  const skill = getBotDifficulty(difficulty);
   getNavigation(map);
   const patrol = [
     { x: 0, z: 0 }, { x: -12, z: 10 }, { x: 12, z: -10 },
@@ -123,10 +124,12 @@ export function createBotController(map, seed = 0) {
   ];
   let time; let decisionAt; let targetId; let readyAt; let lastSeen; let path; let pathAt;
   let patrolIndex; let moveX; let moveZ; let lastPosition; let stuckTime; let jumpUntil; let jumpAt; let nextShot;
+  let observedTarget; let observeAt; let nextAbility;
   function reset() {
     time = 0; decisionAt = 0; targetId = null; readyAt = 0.8; lastSeen = null;
     path = []; pathAt = 0; patrolIndex = 0; moveX = 0; moveZ = 0;
     lastPosition = null; stuckTime = 0; jumpUntil = 0; jumpAt = 0; nextShot = 0;
+    observedTarget = null; observeAt = 0; nextAbility = 0;
   }
   reset();
   function update(player, players, dt = STEP, effects = []) {
@@ -140,7 +143,12 @@ export function createBotController(map, seed = 0) {
         Math.hypot(a.x - player.x, a.z - player.z) - Math.hypot(b.x - player.x, b.z - player.z))[0];
       if ((target?.id ?? null) !== targetId) {
         targetId = target?.id ?? null;
-        readyAt = time + 0.55 + (seed % 3) * 0.08;
+        readyAt = time + skill.reactionTime + (seed % 3) * 0.08;
+        observedTarget = null; observeAt = 0;
+      }
+      if (target && time >= observeAt) {
+        observedTarget = { x: target.x, y: target.y, z: target.z, crouching: target.crouching };
+        observeAt = time + skill.trackingInterval;
       }
       if (target) lastSeen = { x: target.x, z: target.z, at: time };
       let destination = lastSeen && time - lastSeen.at < 3 ? lastSeen : patrol[patrolIndex];
@@ -186,28 +194,31 @@ export function createBotController(map, seed = 0) {
       lastPosition = { x: player.x, z: player.z };
     }
     const target = players.find((other) => other.id === targetId && other.health > 0);
-    const aim = target ? aimAt(player, target) : { yaw: Math.atan2(-moveX, -moveZ), pitch: 0 };
-    // Deliberate tracking error and a bounded turn rate leave room to dodge.
+    const aim = target && observedTarget ? aimAt(player, observedTarget) : { yaw: Math.atan2(-moveX, -moveZ), pitch: 0 };
+    // Aim at the last observed position, with error and a bounded turn rate.
+    // Fresh visibility is still required to fire, so cover always protects players.
     if (target) {
-      aim.yaw += Math.sin(time * 2.3 + seed * 1.7) * 0.025;
-      aim.pitch += Math.sin(time * 1.8 + seed) * 0.014;
+      aim.yaw += Math.sin(time * 2.3 + seed * 1.7) * skill.yawError;
+      aim.pitch += Math.sin(time * 1.8 + seed) * skill.pitchError;
     }
-    const yaw = player.yaw + clamp(angleDifference(aim.yaw, player.yaw), -TURN_SPEED * dt, TURN_SPEED * dt);
-    const pitch = clamp(player.pitch + clamp(aim.pitch - player.pitch, -1.6 * dt, 1.6 * dt), -1.3, 1.3);
+    const yaw = player.yaw + clamp(angleDifference(aim.yaw, player.yaw), -skill.turnSpeed * dt, skill.turnSpeed * dt);
+    const pitch = clamp(player.pitch + clamp(aim.pitch - player.pitch, -skill.pitchSpeed * dt, skill.pitchSpeed * dt), -1.3, 1.3);
     const loadout = getClass(player.classId);
     let fire = Boolean(target && time >= readyAt && Math.abs(angleDifference(aim.yaw, yaw)) < 0.1
       && Math.abs(aim.pitch - pitch) < 0.1 && canSee(player, target, players, map));
-    if (loadout.automatic) fire &&= (time + seed * 0.23) % 1.5 < 0.78;
+    if (loadout.automatic) fire &&= (time - readyAt) % (skill.burstDuration + skill.burstPause) < skill.burstDuration;
     else {
       fire &&= time >= nextShot;
-      if (fire) nextShot = time + loadout.fireInterval + 0.35;
+      if (fire) nextShot = time + loadout.fireInterval + skill.shotPause;
     }
     const targetDistance = target ? Math.hypot(target.x - player.x, target.z - player.z) : Infinity;
     const powerOpportunity = player.classId === 'assault' ? targetDistance < 14
       : player.classId === 'sniper' ? targetDistance < 28
         : player.classId === 'scout' ? targetDistance < 22 : targetDistance < 18 || player.health < 75;
-    const ability = Boolean(target && time >= readyAt && powerOpportunity && player.abilityCooldown <= 0
+    const ability = Boolean(target && time >= readyAt + skill.abilityDelay && time >= nextAbility
+      && powerOpportunity && player.abilityCooldown <= 0 && Math.abs(angleDifference(aim.yaw, yaw)) < 0.24
       && !player.abilityHeld && !player.ropeId && canSee(player, target, players, map));
+    if (ability) nextAbility = time + skill.abilityInterval;
     return {
       seq: player.seq + 1, yaw: Math.atan2(Math.sin(yaw), Math.cos(yaw)), pitch,
       forward: clamp(-Math.sin(yaw) * moveX - Math.cos(yaw) * moveZ, -1, 1),

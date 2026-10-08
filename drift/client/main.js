@@ -6,6 +6,8 @@ import { MAPS, getMap, isMapId } from '../shared/world.js';
 import { createShotEffects } from './shot-effects.js';
 import { CLASSES, DEFAULT_CLASS, getClass, isClassId } from '../shared/classes.js';
 import { MODES, DEFAULT_MODE, isModeId } from '../shared/modes.js';
+import { BOT_DIFFICULTIES, DEFAULT_BOT_DIFFICULTY, normalizeBotDifficulty, getBotDifficulty } from '../shared/bot-difficulty.js';
+import { getAbilityHudState } from './ability-hud.js';
 import { createViewMotion } from './view-motion.js';
 import { createHealthHud } from './health-hud.js';
 import { createDamageFeedback } from './damage-feedback.js';
@@ -16,6 +18,8 @@ import { getPower } from '../shared/powers.js';
 import { createPowerEffects } from './power-effects.js';
 import { createMovementStyle } from './movement-style.js';
 import { createBlastInput } from './blast-input.js';
+import { createGameAudio } from './audio.js';
+import { createAudioFeedback, spatialAudio } from './audio-feedback.js';
 import './ui.css';
 
 const $ = (id) => document.getElementById(id);
@@ -52,6 +56,10 @@ try {
 let createMode = DEFAULT_MODE;
 let createTeam = 'a';
 let roomMode = DEFAULT_MODE;
+let selectedBotDifficulty = DEFAULT_BOT_DIFFICULTY;
+try { selectedBotDifficulty = normalizeBotDifficulty(localStorage.getItem('drift-bot-difficulty')); } catch { /* Optional. */ }
+let selectedBotFill = true;
+let roomBotDifficulty = DEFAULT_BOT_DIFFICULTY;
 
 let renderer;
 try {
@@ -122,7 +130,7 @@ function run() {
   let toastUntil = 0;
   let lastFrame = performance.now(), lastHud = 0, lastPing = 0;
   let frameCount = 0, lastFps = performance.now();
-  let audioContext = null;
+  let audioActive = false;
   let connectionTimer;
   let inviteFeedbackTimer;
   let settingsOrigin = 'lobby';
@@ -144,6 +152,9 @@ function run() {
   const powerEffects = createPowerEffects(scene, { requestClassModels });
   const movementStyle = createMovementStyle();
   const blastInput = createBlastInput();
+  const gameAudio = createGameAudio({ enabled: false });
+  const audioFeedback = createAudioFeedback(gameAudio);
+  void gameAudio.preload();
   const blastPose = {};
   let blastPreview = null;
   let celebration = null;
@@ -275,6 +286,39 @@ function run() {
   }
   syncModes();
   syncCreatePanel();
+
+  $('bot-difficulty-options').replaceChildren(...BOT_DIFFICULTIES.map((difficulty) => {
+    const label = document.createElement('label');
+    label.className = 'difficulty-option';
+    const input = document.createElement('input');
+    input.type = 'radio'; input.name = 'bot-difficulty'; input.value = difficulty.id;
+    input.addEventListener('change', () => {
+      if (!input.checked || connecting || player) return;
+      selectedBotDifficulty = difficulty.id;
+      try { localStorage.setItem('drift-bot-difficulty', selectedBotDifficulty); } catch { /* Optional. */ }
+      syncBotSettings();
+    });
+    label.append(input, document.createTextNode(difficulty.label));
+    return label;
+  }));
+  $('bot-fill').addEventListener('change', (event) => {
+    if (connecting || player) return;
+    selectedBotFill = event.target.checked;
+    syncBotSettings();
+  });
+
+  function syncBotSettings() {
+    const roomSettings = $('join-room-dialog').open || (Boolean(selectedRoom) && !$('create-room-dialog').open);
+    $('bot-fill').checked = selectedBotFill;
+    $('bot-fill').disabled = connecting || roomSettings;
+    for (const input of $('bot-difficulty-options').querySelectorAll('input')) {
+      input.checked = input.value === selectedBotDifficulty;
+      input.disabled = connecting || !selectedBotFill || roomSettings;
+    }
+    $('bot-difficulty-note').textContent = roomSettings ? 'Invites use the room’s bot settings.'
+      : selectedBotFill ? getBotDifficulty(selectedBotDifficulty).description : 'Bots off. Play with friends or practise.';
+  }
+  syncBotSettings();
 
   function syncMapDetails() {
     for (const input of $('map-choices').querySelectorAll('input')) {
@@ -462,27 +506,25 @@ function run() {
   setQuality();
   addEventListener('resize', () => { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); setQuality(); });
 
-  function sound(kind, volume = 1) {
-    if (!settings.sound || !audioContext || audioContext.state !== 'running') return;
-    const start = audioContext.currentTime;
-    const oscillator = audioContext.createOscillator();
-    const gain = audioContext.createGain();
-    const fireSounds = { assault: [125, 38, 0.055, 0.045], sniper: [90, 24, 0.15, 0.075], scout: [175, 55, 0.04, 0.04], heavy: [105, 33, 0.085, 0.065] };
-    const powerSounds = { 'blast-pop': [350, 110, .18, .035], echo: [650, 1500, .22, .018], 'air-juke': [470, 65, .16, .028], bulwark: [95, 190, .28, .04], pop: [170, 32, .23, .065], shatter: [760, 85, .19, .035], glitch: [1250, 180, .1, .02], shield: [480, 210, .065, .018] };
-    const values = kind === 'fire' ? fireSounds[getClass(player?.classId).id] : kind === 'hit' ? [880, 1220, 0.065, 0.055] : kind === 'hurt' ? [135, 48, 0.11, 0.065] : powerSounds[kind] || [270, 540, 0.11, 0.025];
-    oscillator.type = kind === 'fire' || kind === 'pop' || kind === 'air-juke' || kind === 'shatter' ? 'triangle' : 'sine';
-    oscillator.frequency.setValueAtTime(values[0], start);
-    oscillator.frequency.exponentialRampToValueAtTime(values[1], start + values[2]);
-    gain.gain.setValueAtTime(values[3] * Math.max(.01, Math.min(1, volume)), start);
-    gain.gain.exponentialRampToValueAtTime(0.001, start + values[2]);
-    oscillator.connect(gain).connect(audioContext.destination);
-    oscillator.start(start);
-    oscillator.stop(start + values[2] + 0.01);
-    oscillator.onended = () => { oscillator.disconnect(); gain.disconnect(); };
+  function syncAudio() {
+    const active = Boolean(settings.sound && player && locked && !document.hidden && document.hasFocus());
+    if (audioActive && !active) audioFeedback.clear();
+    audioActive = active;
+    gameAudio.setEnabled(active);
+    return active;
+  }
+
+  function sound(kind, options = {}) {
+    if (syncAudio()) gameAudio.play(kind, { classId: player?.classId, ...options });
+  }
+
+  function soundAt(kind, source, radius = 18) {
+    const spatial = spatialAudio(source, player && { ...player, yaw }, radius);
+    if (spatial) sound(kind, { ...spatial, local: false });
   }
 
   function primeAudio() {
-    try { audioContext ||= new AudioContext(); audioContext.resume().catch(() => {}); } catch { /* Audio may be unavailable. */ }
+    void gameAudio.unlock();
   }
 
   function showToast(message) {
@@ -493,6 +535,8 @@ function run() {
 
   function clearControls() {
     keys.clear(); trigger = false; aiming = false;
+    audioFeedback.clear();
+    syncAudio();
     blastInput.cancel(); blastPreview = null; powerEffects.setBlastAim(null);
     $('sniper-scope').hidden = true; $('crosshair').classList.remove('ads');
   }
@@ -511,7 +555,7 @@ function run() {
     if (powerFeedbackLife === event.life && powerFeedbackSeq >= event.abilitySeq) return;
     powerFeedbackLife = event.life; powerFeedbackSeq = event.abilitySeq;
     powerFeedbackUntil = performance.now() + 450;
-    sound(event.powerId);
+    if (['echo', 'air-juke', 'bulwark'].includes(event.powerId)) sound(event.powerId);
   }
   function powerLowersWeapon() { return blastInput.aiming || (player?.abilityTime > 0 && (player.classId === 'scout' || player.classId === 'heavy')); }
   function isAiming() { return aiming && locked && player?.health > 0 && player.reloadIn <= 0 && !powerLowersWeapon(); }
@@ -519,7 +563,8 @@ function run() {
   function updateLobbyRoom() {
     $('play-label').textContent = connecting ? 'Joining arena…' : selectedRoom ? 'Join room' : 'Enter arena';
     $('play-context').textContent = selectedRoom ? `Room ${selectedRoom.toUpperCase()}` : 'Open room';
-    $('entry-note').textContent = selectedRoom ? `Joining ${selectedRoom.toUpperCase()} loads that room’s arena. Create a room to use your selection.` : 'No account or install needed.';
+    $('entry-note').textContent = selectedRoom ? `Joining ${selectedRoom.toUpperCase()} uses that room’s arena and bot settings.` : 'No account or install needed.';
+    syncBotSettings();
   }
 
   function setLobbyBusy(busy) {
@@ -534,6 +579,8 @@ function run() {
   }
 
   function activeMenu() {
+    if ($('create-room-dialog').open) return $('create-room-dialog');
+    if ($('join-room-dialog').open) return $('join-room-dialog');
     return !$('settings').hidden ? $('settings') : !$('pause').hidden ? $('pause') : null;
   }
 
@@ -742,7 +789,9 @@ function run() {
     }
     if (attempt !== joinAttempt) return;
     updateLobbyRoom();
-    const connection = new WebSocket(`${location.protocol === 'https:' ? 'wss:' : 'ws:'}//${location.host}/ws`);
+    const socketUrl = new URL('./ws', location.href);
+    socketUrl.protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const connection = new WebSocket(socketUrl);
     socket = connection;
     const connectionTimeout = () => { if (socket === connection && !player) leave('The server did not respond. Please try again.'); };
     // The static lobby can load before Cloudflare starts the match container.
@@ -751,12 +800,13 @@ function run() {
       if (socket !== connection) return;
       clearTimeout(connectionTimer);
       connectionTimer = setTimeout(connectionTimeout, 8000);
-      const botFill = $('bot-fill').checked;
+      const botFill = selectedBotFill;
+      const botDifficulty = selectedBotDifficulty;
       const mode = quickplay ? selectedMode : createMode;
       const team = quickplay ? undefined : MODES[mode].teams ? createTeam : undefined;
       connection.send(JSON.stringify(quickplay
-        ? { type: 'join', quickplay: true, mapId: selectedMap, mode, team, name, classId, botFill }
-        : { type: 'join', room: nextRoom, name, classId, mapId: selectedMap, mode, team, botFill }));
+        ? { type: 'join', quickplay: true, mapId: selectedMap, mode, team, name, classId, botFill, botDifficulty }
+        : { type: 'join', room: nextRoom, name, classId, mapId: selectedMap, mode, team, botFill, botDifficulty }));
     });
     connection.addEventListener('message', (event) => {
       if (socket !== connection) return;
@@ -775,6 +825,7 @@ function run() {
         clearTimeout(connectionTimer);
         playerId = message.id;
         room = message.room;
+        roomBotDifficulty = normalizeBotDifficulty(message.botDifficulty);
         selectedRoom = Object.values(PUBLIC_ROOMS).includes(room) ? '' : room;
         loadMap(message.mapId);
         setLobbyBusy(false);
@@ -792,6 +843,7 @@ function run() {
         syncWeapon(true);
         yaw = player.yaw || 0;
         pitch = player.pitch || 0;
+        sound('round-start');
         offset.set(0, 0, 0);
         sequence = player.seq || 0;
         pending = [];
@@ -837,6 +889,7 @@ function run() {
 
   function receiveState(message) {
     players = message.players;
+    roomBotDifficulty = normalizeBotDifficulty(message.botDifficulty);
     remaining = message.remaining;
     const authoritative = players.find((item) => item.id === playerId);
     if (authoritative) {
@@ -863,8 +916,10 @@ function run() {
         clearControls();
         movementStyle.reset();
         syncWeapon(true);
+        if (!(message.events || []).some((event) => event.type === 'round')) sound('respawn');
         showToast(`${getClass(player.classId).name} equipped. Keep moving.`);
       } else {
+        if (old.health > 0 && authoritative.health <= 0) audioFeedback.clear();
         if (authoritative.health < old.health) {
           const hit = (message.events || []).findLast((event) => event.type === 'shot' && event.hit === playerId);
           damageFeedback.hit(old.health - authoritative.health, hit?.from);
@@ -887,18 +942,24 @@ function run() {
       if (weaponClass !== player.classId) syncWeapon();
       healthHud.update(player.health, { animate: animateDamage() });
     }
+    const audible = syncAudio();
+    audioFeedback.sync(player, audible);
+    const listener = player && { ...player, yaw };
+    audioFeedback.observe(players, message.effects || [], listener, { active: audible });
     updateAvatars();
     powerEffects.sync({ players, effects: message.effects || [] }, playerId);
     for (const event of message.events || []) {
       if (event.type === 'shot') {
         powerEffects.event(event);
-        if (event.shieldHit === playerId) sound('shield');
+        if (audible) audioFeedback.remoteShot(event, listener);
         if (celebration?.winnerId === event.id) celebration = null;
         const remoteGun = avatars.get(event.id)?.group.userData.character.gun;
         const origin = event.id === playerId ? weapon.muzzlePosition(muzzle)
           : remoteGun?.localToWorld(muzzle.fromArray(remoteGun.userData.anchors.muzzle));
         shotEffects.shoot(event, { origin });
-        if (event.hit && event.id === playerId) { hitAlpha = 1; sound('hit'); }
+        const victim = players.find((item) => item.id === event.hit);
+        const friendlyHit = MODES[roomMode]?.teams && victim?.team && victim.team === player?.team;
+        if (event.hit && event.id === playerId && !friendlyHit) { hitAlpha = 1; sound('hit'); }
         if (targets.has(event.hit)) targets.get(event.hit).hitAt = performance.now() / 1000;
       } else if (event.type === 'kill') {
         const killerState = players.find((item) => item.id === event.killer);
@@ -914,13 +975,14 @@ function run() {
         if (event.killer === playerId) showToast(event.airborne ? `AIR MAIL · Eliminated ${victim}` : `Eliminated ${victim}`);
       } else if (event.type === 'power') {
         powerEffects.event(event);
-        if (event.action === 'activate') powerFeedback(event);
-        else if (['pop', 'shatter', 'glitch'].includes(event.action)) {
-          const distance = Math.hypot(event.x - player.x, event.y - player.y, event.z - player.z);
-          if (distance < 18) sound(event.action, 1 - distance / 18);
-        }
+        if (event.action === 'activate') {
+          powerFeedback(event);
+          if (event.owner !== playerId && ['echo', 'air-juke', 'bulwark'].includes(event.powerId)) soundAt(event.powerId, event);
+        } else if (event.action === 'pop') soundAt('pop', event);
         if (celebration?.winnerId === event.owner) celebration = null;
       } else if (event.type === 'round') {
+        audioFeedback.clear();
+        sound('round-start');
         shotEffects.clear();
         powerEffects.clear();
         blastInput.cancel(); blastPreview = null;
@@ -1077,9 +1139,11 @@ function run() {
   function tick() {
     if (!player || socket?.readyState !== WebSocket.OPEN) return;
     const input = inputForTick();
+    const before = { ...player };
     viewMotion.beforeStep(player);
     stepPlayer(player, input, STEP, currentMap);
     viewMotion.afterStep(player);
+    audioFeedback.step(before, player, input, STEP, syncAudio());
     if (player.abilityUsed) {
       const event = { type: 'power', action: 'activate', powerId: getPower(player.classId).id, owner: playerId,
         life: player.life, abilitySeq: player.abilitySeq, x: player.x, y: player.y, z: player.z,
@@ -1094,7 +1158,7 @@ function run() {
     outgoing.push(input);
     if (pending.length > 120) { leave('The connection is too far behind. Please join again.'); return; }
     if (outgoing.length >= 2) { socket.send(JSON.stringify({ type: 'input', inputs: outgoing })); outgoing = []; }
-    if (player.fired) { recoil = getClass(player.classId).recoil; sound('fire'); }
+    if (player.fired) recoil = getClass(player.classId).recoil;
   }
 
   function updateHud(now) {
@@ -1102,18 +1166,19 @@ function run() {
     const health = Math.max(0, player.health);
     const loadout = getClass(player.classId);
     const power = getPower(player.classId);
-    const cooldown = Math.max(0, player.abilityCooldown || 0);
-    const activePower = player.abilityTime > 0;
+    const ability = getAbilityHudState(player, { aiming: blastInput.aiming, preview: blastPreview, deployed: now < powerFeedbackUntil });
     $('ability-name').textContent = power.name;
     $('ability-block').style.setProperty('--power-color', power.color);
-    $('ability-block').dataset.ready = String(health > 0 && cooldown === 0 && !player.ropeId);
-    $('ability-block').dataset.active = String(health > 0 && (blastInput.aiming || activePower || now < powerFeedbackUntil));
-    $('ability-status').textContent = health <= 0 ? 'RESPAWNING' : player.ropeId ? 'RELEASE ROPE'
-      : blastInput.aiming ? blastPreview?.landed ? `${Math.round(blastPreview.distance)}m · LMB THROW · RMB CANCEL` : 'AIM LOWER · RMB CANCEL'
-        : activePower && player.classId === 'heavy' ? `${Math.ceil(player.shieldHealth)} SHIELD · ${player.abilityTime.toFixed(1)}s`
-          : now < powerFeedbackUntil ? 'DEPLOYED' : activePower ? 'ACTIVE' : cooldown > 0 ? `${Math.ceil(cooldown)}s` : player.classId === 'assault' ? 'Q TO AIM' : 'READY';
-    $('ability-fill').style.transform = `scaleX(${1 - Math.min(1, cooldown / power.cooldown)})`;
-    $('ability-block').setAttribute('aria-label', `${power.name}: ${$('ability-status').textContent}. Press Q. ${power.description}`);
+    $('ability-block').dataset.power = power.id;
+    $('ability-block').dataset.state = ability.state;
+    $('ability-block').dataset.ready = String(ability.ready);
+    $('ability-block').dataset.active = String(ability.active);
+    $('ability-block').dataset.motion = animateDamage() ? 'on' : 'off';
+    $('ability-status').textContent = ability.status;
+    $('ability-hint').textContent = ability.hint;
+    $('ability-countdown').textContent = ability.state === 'cooldown' ? ability.status.replace(/s$/, '') : '';
+    $('ability-fill').style.strokeDashoffset = String((1 - ability.progress) * 100);
+    $('ability-block').setAttribute('aria-label', `${power.name}: ${ability.status}. ${ability.hint}. ${power.description}`);
     const speed = Math.hypot(player.vx, player.vz);
     healthHud.update(health, { animate: animateDamage() });
     $('ammo').textContent = player.ammo;
@@ -1129,8 +1194,10 @@ function run() {
     $('reload-hint').textContent = player.reloadIn > 0 ? 'RELOADING…' : !loadout.automatic && player.fireCooldown > 0 ? 'CYCLING BOLT…' : 'R · RELOAD';
     $('player-count').textContent = `${players.length || 1} / 6`;
     const botCount = players.filter((state) => state.bot).length;
-    $('bot-count').textContent = botCount ? `${botCount} AI opponent${botCount === 1 ? '' : 's'}` : '';
+    const difficultyLabel = getBotDifficulty(roomBotDifficulty).label;
+    $('bot-count').textContent = botCount ? `${botCount} AI · ${difficultyLabel} difficulty` : '';
     $('bot-count').hidden = botCount === 0;
+    $('pause-bots').textContent = botCount ? `${difficultyLabel} bots · ${botCount} in this room` : 'No bots in this room';
     const seconds = Math.max(0, Math.ceil(remaining || 0));
     $('match-time').textContent = `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`;
     $('warmup-tip').hidden = players.length - botCount > 1;
@@ -1144,24 +1211,71 @@ function run() {
   }
 
   $('play').addEventListener('click', () => start(selectedRoom));
+  function closeCreateRoom() {
+    $('create-room-dialog').close();
+    $('bot-settings-home').append($('bot-settings'));
+    $('create-room').setAttribute('aria-expanded', 'false');
+    syncBotSettings();
+  }
   $('create-room').addEventListener('click', () => {
     if (connecting || player) return;
-    $('create-room-form').hidden = !$('create-room-form').hidden;
-    $('create-room').setAttribute('aria-expanded', String(!$('create-room-form').hidden));
+    closeJoinRoom();
+    $('create-room-context').textContent = `${currentMap.name} · ${$('player-name').value.trim() || 'Rookie'} · ${getClass(selectedClass).character}`;
+    $('create-bot-settings').append($('bot-settings'));
+    $('create-room-dialog').showModal();
+    $('create-room').setAttribute('aria-expanded', 'true');
+    syncCreatePanel();
+    syncBotSettings();
   });
-  $('create-room-submit').addEventListener('click', () => {
+  $('create-room-close').addEventListener('click', closeCreateRoom);
+  $('create-room-cancel').addEventListener('click', closeCreateRoom);
+  $('create-room-dialog').addEventListener('cancel', (event) => {
+    event.preventDefault();
+    closeCreateRoom();
+  });
+  $('create-room-dialog').addEventListener('click', (event) => {
+    if (event.target !== $('create-room-dialog')) return;
+    const bounds = event.target.getBoundingClientRect();
+    if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) closeCreateRoom();
+  });
+  $('create-room-form').addEventListener('submit', (event) => {
+    event.preventDefault();
     if (connecting || player) return;
     const bytes = crypto.getRandomValues(new Uint8Array(5));
     const nextRoom = Array.from(bytes, (byte) => byte.toString(36).padStart(2, '0')).join('').slice(0, 8);
+    closeCreateRoom();
     start(nextRoom);
   });
+  function closeJoinRoom() {
+    $('join-room-dialog').close();
+    $('join-toggle').setAttribute('aria-expanded', 'false');
+    syncBotSettings();
+  }
   $('join-toggle').addEventListener('click', () => {
     if (connecting || player) return;
-    $('join-form').hidden = !$('join-form').hidden;
-    $('join-toggle').setAttribute('aria-expanded', String(!$('join-form').hidden));
-    if (!$('join-form').hidden) $('room-code').focus();
+    if ($('create-room-dialog').open) closeCreateRoom();
+    $('join-room-dialog').showModal();
+    $('join-toggle').setAttribute('aria-expanded', 'true');
+    syncBotSettings();
+    $('room-code').focus();
   });
-  $('join-form').addEventListener('submit', (event) => { event.preventDefault(); start($('room-code').value, false); });
+  $('join-room-close').addEventListener('click', closeJoinRoom);
+  $('join-room-cancel').addEventListener('click', closeJoinRoom);
+  $('join-room-dialog').addEventListener('cancel', (event) => {
+    event.preventDefault();
+    closeJoinRoom();
+  });
+  $('join-room-dialog').addEventListener('click', (event) => {
+    if (event.target !== $('join-room-dialog')) return;
+    const bounds = event.target.getBoundingClientRect();
+    if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) closeJoinRoom();
+  });
+  $('join-form').addEventListener('submit', (event) => {
+    event.preventDefault();
+    if (connecting || player) return;
+    closeJoinRoom();
+    start($('room-code').value, false);
+  });
   $('resume').addEventListener('click', () => { primeAudio(); requestLock(); });
   $('leave').addEventListener('click', () => {
     selectedRoom = '';
@@ -1224,6 +1338,7 @@ function run() {
       settings[id] = input.type === 'checkbox' ? input.checked : input.type === 'range' ? Number(input.value) : input.value;
       $('sensitivity-value').textContent = Number(settings.sensitivity).toFixed(1);
       if (id === 'quality') setQuality();
+      if (id === 'sound') { syncAudio(); if (settings.sound) primeAudio(); }
       try { localStorage.setItem('drift-settings', JSON.stringify(settings)); } catch { /* Optional. */ }
     });
   }

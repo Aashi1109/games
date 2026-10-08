@@ -1,6 +1,6 @@
 import {readFile,writeFile} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
-import {resolve,dirname} from 'node:path';
+import {resolve} from 'node:path';
 import {Matrix4,Quaternion,Vector3} from 'three';
 import {loadGLB,audit,triangleDataSha256} from './validate-tripo.mjs';
 const reportPath=resolve(process.argv[2]??'output/models/tripo-optimized/optimization-report.json');

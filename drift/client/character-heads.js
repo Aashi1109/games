@@ -342,7 +342,7 @@ function noseAndMouth(parts, definition, style, id) {
 // Clip a sharp beard boundary to the actual facial triangles, retaining their
 // normals. The beard is a colored region of the jaw, never a floating slab.
 function beardSurface(parts, definition, paint = null) {
-  const { id, profile, faceGeometry: surface }=definition;
+  const { id, profile }=definition;
   if(id==='assault')return;
   const shift=.032-profile.offset;
   const side=[ [0,1.520],[.160,1.520],[.160,1.694],

@@ -9,6 +9,7 @@ import { DEFAULT_MAP, getMap, isMapId } from '../shared/world.js';
 import { CLASSES, DEFAULT_CLASS, getClass, isClassId } from '../shared/classes.js';
 import { DEFAULT_MODE, getMode, isModeId } from '../shared/modes.js';
 import { createBotController } from './bots.js';
+import { normalizeBotDifficulty } from '../shared/bot-difficulty.js';
 import { createPowerEffect, powerEvent, resolvePowerShot, stepPowerEffects } from '../shared/powers.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -33,6 +34,7 @@ export async function createGameServer({
   host = process.env.HOST || '0.0.0.0',
   production = process.argv.includes('--production') || process.env.NODE_ENV === 'production',
   serveClient = true,
+  basePath = '/',
   maxPlayers = 6,
   botTarget = 4,
   maxRooms = 64,
@@ -41,7 +43,9 @@ export async function createGameServer({
   respawnSeconds = 2,
   scoreCap = 200,
 } = {}) {
+  if (!/^\/(?:[a-zA-Z0-9_-]+\/)*$/.test(basePath)) throw new Error('Invalid client base path');
   let vite;
+  let viteEnvironmentPath;
   const rooms = new Map();
   const sockets = new Map();
   const bucketSequence = new Map();
@@ -52,27 +56,40 @@ export async function createGameServer({
     let pathname;
     try { pathname = decodeURIComponent(new URL(req.url, 'http://localhost').pathname); }
     catch { res.writeHead(400).end(); return; }
-    if (pathname === '/health') {
+    if (!pathname.startsWith(basePath)) { res.writeHead(404).end(); return; }
+    const clientPath = '/' + pathname.slice(basePath.length);
+    // The collection exposes game assets, never the development project's private files.
+    if (basePath !== '/' && clientPath !== '/health' && !(
+      ['/', '/index.html', '/mark.svg'].includes(clientPath) ||
+      clientPath === viteEnvironmentPath ||
+      /^\/(?:client|shared|fonts|audio|assets|output\/models\/tripo-runtime|@vite|@id)\//.test(clientPath) ||
+      clientPath.startsWith('/node_modules/.vite/deps/')
+    )) { res.writeHead(404).end(); return; }
+    if (clientPath !== viteEnvironmentPath && clientPath.split('/').some(part => part === '..' || (part.startsWith('.') && part !== '.vite'))) { res.writeHead(404).end(); return; }
+    if (clientPath === '/health') {
       res.writeHead(200, { 'Content-Type': 'application/json' }).end(JSON.stringify({ ok: true, rooms: rooms.size })); return;
     }
     if (vite) { vite.middlewares(req, res); return; }
     if (!serveClient) { res.writeHead(404).end(); return; }
     if (req.method !== 'GET' && req.method !== 'HEAD') { res.writeHead(405).end(); return; }
     const dist = path.join(ROOT, 'dist');
-    let file = path.resolve(dist, `.${pathname}`);
+    let file = path.resolve(dist, `.${clientPath}`);
     if (!file.startsWith(`${dist}${path.sep}`) && file !== dist) { res.writeHead(403).end(); return; }
     try {
-      if (pathname === '/') file = path.join(dist, 'index.html');
+      if (clientPath === '/') file = path.join(dist, 'index.html');
       const details = await stat(file);
       if (!details.isFile()) throw new Error('Not a file');
-      const mime = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.svg': 'image/svg+xml', '.png': 'image/png', '.ico': 'image/x-icon' }[path.extname(file)] || 'application/octet-stream';
+      const mime = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.svg': 'image/svg+xml', '.png': 'image/png', '.ico': 'image/x-icon', '.wav': 'audio/wav', '.txt': 'text/plain; charset=utf-8' }[path.extname(file)] || 'application/octet-stream';
       res.writeHead(200, { 'Content-Type': mime, 'Cache-Control': file.includes(`${path.sep}assets${path.sep}`) ? 'public, max-age=31536000, immutable' : 'no-cache' });
       res.end(req.method === 'HEAD' ? undefined : await readFile(file));
     } catch { res.writeHead(404, { 'Content-Type': 'text/plain' }).end('Not found. Build the client with pnpm run build.'); }
   });
   if (serveClient && !production) {
+    // Vite imports this one runtime file through the package manager's real path.
+    const environmentFile = fileURLToPath(new URL('../client/env.mjs', import.meta.resolve('vite')));
+    viteEnvironmentPath = '/' + path.relative(ROOT, environmentFile).split(path.sep).join('/');
     const { createServer } = await import('vite');
-    vite = await createServer({ root: ROOT, server: { middlewareMode: true, hmr: { server: httpServer } }, appType: 'spa' });
+    vite = await createServer({ root: ROOT, base: basePath, server: { middlewareMode: true, hmr: { server: httpServer } }, appType: 'spa' });
   }
   const wss = new WebSocketServer({ noServer: true, maxPayload: 4096, perMessageDeflate: false });
   function send(ws, value) {
@@ -82,7 +99,7 @@ export async function createGameServer({
   }
   function error(ws, message) { send(ws, { type: 'error', message }); }
   httpServer.on('upgrade', (req, socket, head) => {
-    if (req.url?.split('?')[0] !== '/ws') { if (!vite) socket.destroy(); return; }
+    if (req.url?.split('?')[0] !== `${basePath}ws`) { if (!vite) socket.destroy(); return; }
     if (sockets.size >= maxSockets) { socket.write('HTTP/1.1 503 Service Unavailable\r\n\r\n'); socket.destroy(); return; }
     if (req.headers.origin) {
       try {
@@ -120,9 +137,10 @@ export async function createGameServer({
         if (!isModeId(modeId)) { error(ws, 'Choose a valid mode.'); return; }
         const name = message.name.replace(/[\x00-\x1f\x7f<>]/g, '').trim().slice(0, 16) || 'Runner';
         const botFill = message.botFill !== false;
+        const botDifficulty = normalizeBotDifficulty(message.botDifficulty);
         let room;
         if (message.quickplay) {
-          const bucket = `${mapId}:${modeId}`;
+          const bucket = `${mapId}:${modeId}:${botFill ? botDifficulty : 'no-bots'}`;
           room = [...rooms.values()].find((candidate) => candidate.bucket === bucket
             && [...candidate.peers.values()].filter((other) => !other.bot).length < maxPlayers);
           if (!room) {
@@ -130,7 +148,7 @@ export async function createGameServer({
             const sequence = (bucketSequence.get(bucket) || 0) + 1;
             bucketSequence.set(bucket, sequence);
             const code = `${bucket}#${sequence}`;
-            room = { code, mapId, map: getMap(mapId), mode: modeId, botFill, bucket, score: { a: 0, b: 0 }, peers: new Map(), events: [], effects: [], remaining: roundSeconds, spawnCounter: 0 };
+            room = { code, mapId, map: getMap(mapId), mode: modeId, botFill, botDifficulty, bucket, score: { a: 0, b: 0 }, peers: new Map(), events: [], effects: [], remaining: roundSeconds, spawnCounter: 0 };
             rooms.set(code, room);
           }
         } else {
@@ -140,7 +158,7 @@ export async function createGameServer({
           room = rooms.get(code);
           if (!room) {
             if (rooms.size >= maxRooms) { error(ws, 'Server is busy. Try an existing room.'); return; }
-            room = { code, mapId, map: getMap(mapId), mode: modeId, botFill, bucket: null, score: { a: 0, b: 0 }, peers: new Map(), events: [], effects: [], remaining: roundSeconds, spawnCounter: 0 };
+            room = { code, mapId, map: getMap(mapId), mode: modeId, botFill, botDifficulty, bucket: null, score: { a: 0, b: 0 }, peers: new Map(), events: [], effects: [], remaining: roundSeconds, spawnCounter: 0 };
             rooms.set(code, room);
           }
           const humans = [...room.peers.values()].filter((other) => !other.bot);
@@ -151,7 +169,7 @@ export async function createGameServer({
         peer.player = { ...createPlayer(randomUUID().slice(0, 8), name, chooseSpawn(room), classId, room.map), ...(team ? { team } : {}) };
         peer.room = room; peer.lastInput = neutral(peer.player); room.peers.set(peer.player.id, peer);
         syncBots(room);
-        send(ws, { type: 'welcome', id: peer.player.id, room: room.code, mapId: room.mapId, mode: room.mode, player: peer.player, effects: room.effects, maxPlayers });
+        send(ws, { type: 'welcome', id: peer.player.id, room: room.code, mapId: room.mapId, mode: room.mode, botDifficulty: room.botDifficulty, player: peer.player, effects: room.effects, maxPlayers });
         return;
       }
       if (message.type === 'class') {
@@ -226,7 +244,7 @@ export async function createGameServer({
       const mode = getMode(room.mode);
       const team = mode.teams ? assignTeam(room) : undefined;
       const player = { ...createPlayer(randomUUID().slice(0, 8), name, chooseSpawn(room), classId, room.map), bot: true, ...(team ? { team } : {}) };
-      const peer = { player, room, ws: null, bot: createBotController(room.map, slot), botSlot: slot, queue: [], receivedSeq: -1, lastInput: neutral(player) };
+      const peer = { player, room, ws: null, bot: createBotController(room.map, slot, room.botDifficulty), botSlot: slot, queue: [], receivedSeq: -1, lastInput: neutral(player) };
       room.peers.set(player.id, peer); bots.push(peer);
     }
   }
@@ -322,7 +340,7 @@ export async function createGameServer({
         if (room.score.a >= scoreCap || room.score.b >= scoreCap) room.remaining = 0;
       }
       if (ticks % 3 === 0) {
-        const snapshot = { type: 'state', room: room.code, mapId: room.mapId, remaining: Math.ceil(room.remaining), players: [...room.peers.values()].map((peer) => peer.player), effects: room.effects, events: room.events.splice(0) };
+        const snapshot = { type: 'state', room: room.code, mapId: room.mapId, botDifficulty: room.botDifficulty, remaining: Math.ceil(room.remaining), players: [...room.peers.values()].map((peer) => peer.player), effects: room.effects, events: room.events.splice(0) };
         for (const peer of room.peers.values()) send(peer.ws, snapshot);
       }
     }

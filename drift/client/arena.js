@@ -13,7 +13,6 @@ const PALETTE = {
   floor: '#bcbcaf', wall: '#d4d1be', terrace: '#dad6c4', step: '#e3decb',
   center: '#d5d2c2', pillar: '#cf5334', beam: '#cf5334', cover: '#687a79',
 };
-const INK = '#263e43';
 
 function coloredBox(box, color, shaded = true) {
   const geometry = new THREE.BoxGeometry(box.w, box.h, box.d);

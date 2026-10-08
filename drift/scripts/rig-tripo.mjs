@@ -144,7 +144,7 @@ function skinWeights(q, indices, joints, character, groups=null, leftArmRegion=n
         candidates.push([distance(p,sample),i]);
       }
       candidates.sort((x,y)=>x[0]-y[0]);
-      for(const [d,i] of candidates.slice(0,12)) seeds.set(i,Math.min(seeds.get(i)??Infinity,euclidean[bone][i]));
+      for(const [,i] of candidates.slice(0,12)) seeds.set(i,Math.min(seeds.get(i)??Infinity,euclidean[bone][i]));
     }
     if(!seeds.size)throw new Error(`No seeds for ${name}`);
     boneSeeds.push({bone:name,count:seeds.size});

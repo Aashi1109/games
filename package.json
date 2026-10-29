@@ -4,6 +4,8 @@
   "type": "module",
   "packageManager": "pnpm@12.10.1",
   "scripts": {
+    "prepare": "node -e \"if (!process.env.CI && require('node:fs').existsSync('.git')) import('./scripts/install-git-hooks.mjs')\"",
+    "precommit": "node scripts/precommit.mjs",
     "dev": "node src/server.ts --dev",
     "start": "node src/server.ts",
     "build": "next build",

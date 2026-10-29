@@ -59,6 +59,8 @@ Native links between games start a fresh document. Within each page, the client 
 
 ## Checks
 
+Tests run locally in the Git pre-commit hook, not in GitHub Actions. `pnpm install` installs the hook for local checkouts while preserving Git LFS hooks. Each commit runs game unit tests, a fresh production build, server and lifecycle tests, and browser tests against a temporary local server. Install Chromium once before committing. GitHub Actions runs lint, type and format checks, the production dependency audit, and the build.
+
 ```sh
 pnpm run check          # ESLint, TypeScript and Prettier
 pnpm run build          # Next.js production build

@@ -2,7 +2,7 @@ name: questline
 
 services:
   questline:
-    image: ghcr.io/aashi1109/questline:latest
+    image: ghcr.io/akatsukihq/questline:latest
     init: true
     restart: unless-stopped
     stop_grace_period: 30s

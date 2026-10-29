@@ -93,7 +93,7 @@ The Docker context allows only package manifests, Next.js/TypeScript build confi
 
 ## Oracle deployment
 
-The production hostname is **https://games.smarttools.lol**. The deployment workflow builds a native ARM64 image on `ubuntu-24.04-arm`, caches Docker layers in GitHub Actions, and publishes `ghcr.io/aashi1109/questline:latest`. Checkout includes Git LFS models before building. The image package keeps the `questline` name independently of the GitHub repository name.
+The production hostname is **https://games.smarttools.lol**. The deployment workflow builds a native ARM64 image on `ubuntu-24.04-arm`, caches Docker layers in GitHub Actions, and publishes `ghcr.io/akatsukihq/questline:latest`. Checkout includes Git LFS models before building. The image package keeps the `questline` name independently of the GitHub repository name.
 
 Add these repository secrets in **Settings → Secrets and variables → Actions**:
 

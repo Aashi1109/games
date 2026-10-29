@@ -1,0 +1,51 @@
+{
+  "name": "questline",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@12.10.1",
+  "scripts": {
+    "dev": "node src/server.ts --dev",
+    "start": "node src/server.ts",
+    "build": "next build",
+    "start:production": "pnpm start",
+    "check": "pnpm run lint && pnpm run typecheck && pnpm run format:check",
+    "test": "node --test src/games/*/test/*.test.js",
+    "test:arcade": "node --test src/games/arcade/test/*.test.js",
+    "test:launch": "NODE_ENV=production node --test tests/server.test.mjs",
+    "test:faultline": "node --test src/games/faultline/test/*.test.js",
+    "lint": "eslint . --max-warnings=0",
+    "lint:fix": "eslint . --fix --max-warnings=0",
+    "typecheck": "next typegen && tsc --noEmit",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test:e2e": "playwright test",
+    "test:drift": "node --test src/games/drift/test/*.test.js",
+    "test:lifecycle": "node --test tests/game-lifecycle.test.mjs"
+  },
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "dependencies": {
+    "next": "16.4.1",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "three": "0.186.1",
+    "ws": "8.22.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.39.5",
+    "@playwright/test": "1.63.0",
+    "@types/node": "26.6.4",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@types/three": "0.186.0",
+    "@types/ws": "8.18.2",
+    "@typescript/native": "npm:typescript@7.0.2",
+    "eslint": "9.39.5",
+    "eslint-config-next": "16.4.1",
+    "eslint-config-prettier": "10.1.8",
+    "globals": "17.13.0",
+    "prettier": "3.9.9",
+    "typescript": "npm:@typescript/typescript6@6.0.2"
+  }
+}

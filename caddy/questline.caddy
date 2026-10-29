@@ -1,0 +1,5 @@
+games.smarttools.lol {
+	reverse_proxy questline:8080 {
+		header_up X-Questline-Client-Address {remote_host}
+	}
+}

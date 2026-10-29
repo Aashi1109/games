@@ -1,1 +1,4 @@
 *.glb filter=lfs diff=lfs merge=lfs -text
+
+# Preserve upstream font licenses verbatim, including their original whitespace.
+*OFL*.txt -whitespace

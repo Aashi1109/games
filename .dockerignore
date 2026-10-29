@@ -1,0 +1,39 @@
+# Only dependency manifests, build configuration, and application inputs enter
+# the build. CI, deployment, editor, documentation, design, and scratch files do not.
+**
+!Dockerfile
+!package.json
+!pnpm-lock.yaml
+!pnpm-workspace.yaml
+!next.config.mjs
+!tsconfig.json
+!src/
+!src/**
+!public/
+!public/**
+!assets/
+!assets/**
+
+# These folders contain unused design exports, not shared runtime assets.
+assets/design
+assets/design-crops
+
+# Keep development files out of the allowed application directories as well.
+**/test
+**/tests
+**/__tests__
+**/__mocks__
+**/*.test.*
+**/*.spec.*
+**/AGENTS.md
+**/.env*
+**/.git
+**/.vscode
+**/.idea
+**/node_modules
+**/.next
+**/__pycache__
+**/*.pyc
+**/.DS_Store
+**/*.log
+**/*.tsbuildinfo

@@ -1,0 +1,14 @@
+node_modules/
+.next/
+tmp/
+public/
+assets/
+design/
+docs/
+pnpm-lock.yaml
+src/games/**/*.js
+src/games/**/*.css
+src/games/**/*.html
+src/games/**/*.md
+.impeccable.md
+AGENTS.md

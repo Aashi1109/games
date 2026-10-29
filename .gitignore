@@ -1,0 +1,30 @@
+# Dependencies and generated output
+node_modules/
+.next/
+build/
+dist/
+coverage/
+playwright-report/
+test-results/
+/tmp/
+.tmp/
+*.tsbuildinfo
+next-env.d.ts
+*.log
+.DS_Store
+
+# Local environment and credentials
+.env*
+!.env.example
+env.prod
+
+# Local editor/agent settings and optional design source archives
+.vscode/
+.impeccable.md
+/design/
+/assets/design/
+/assets/design-crops/
+
+# Python model-generation scratch files
+__pycache__/
+*.pyc

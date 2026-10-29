@@ -1,0 +1,282 @@
+{
+  "version": 1,
+  "description": "Faultline runtime art. Miner and equipment are transparent Blender renders; crystal ore uses a Modly-generated mesh; creatures and mark are original SVG vector art.",
+  "oreModly": {
+    "url": "ore-modly.png",
+    "width": 192,
+    "height": 192,
+    "contentBounds": [10, 11, 182, 180],
+    "anchor": {"x": 0.5, "y": 0.9375},
+    "source": "AI-generated locally in Modly / Hunyuan3D Mini from our original ore image, then shaded and rendered in Blender.",
+    "sourceSha256": "6ce9b2073e7c1124e4c54949694820d565faf938d6ccf1ab4698894ad9cd2fb1"
+  },
+  "miner": {
+    "url": "miner.png",
+    "frameWidth": 256,
+    "frameHeight": 256,
+    "columns": 8,
+    "rows": {
+      "idle": 0,
+      "walk": 1,
+      "drill": 2
+    },
+    "facing": "right",
+    "fps": {
+      "idle": 4,
+      "walk": 8,
+      "drill": 8
+    },
+    "anchor": {
+      "x": 0.5,
+      "y": 0.9375
+    },
+    "grounding": "Every frame aligns its lowest evaluated mesh vertex with world Z zero.",
+    "contentBoundsByRow": [
+      [
+        [
+          66,
+          25,
+          156,
+          240
+        ],
+        [
+          66,
+          25,
+          156,
+          240
+        ],
+        [
+          66,
+          25,
+          156,
+          240
+        ],
+        [
+          66,
+          25,
+          156,
+          240
+        ],
+        [
+          66,
+          25,
+          156,
+          240
+        ],
+        [
+          66,
+          25,
+          155,
+          240
+        ],
+        [
+          66,
+          25,
+          155,
+          240
+        ],
+        [
+          66,
+          25,
+          155,
+          240
+        ]
+      ],
+      [
+        [
+          66,
+          25,
+          156,
+          240
+        ],
+        [
+          66,
+          26,
+          161,
+          240
+        ],
+        [
+          66,
+          27,
+          162,
+          240
+        ],
+        [
+          66,
+          26,
+          161,
+          240
+        ],
+        [
+          66,
+          25,
+          156,
+          240
+        ],
+        [
+          66,
+          26,
+          157,
+          240
+        ],
+        [
+          66,
+          27,
+          161,
+          240
+        ],
+        [
+          66,
+          26,
+          157,
+          240
+        ]
+      ],
+      [
+        [
+          66,
+          25,
+          189,
+          240
+        ],
+        [
+          66,
+          25,
+          190,
+          240
+        ],
+        [
+          66,
+          25,
+          189,
+          240
+        ],
+        [
+          66,
+          25,
+          189,
+          240
+        ],
+        [
+          66,
+          25,
+          189,
+          240
+        ],
+        [
+          66,
+          25,
+          190,
+          240
+        ],
+        [
+          66,
+          25,
+          189,
+          240
+        ],
+        [
+          66,
+          25,
+          189,
+          240
+        ]
+      ]
+    ]
+  },
+  "shelter": {
+    "url": "shelter.png",
+    "width": 640,
+    "height": 400,
+    "contentBounds": [
+      94,
+      31,
+      576,
+      385
+    ],
+    "anchor": {
+      "x": 0.5,
+      "y": 0.9625
+    }
+  },
+  "turret": {
+    "url": "turret.png",
+    "width": 256,
+    "height": 256,
+    "facing": "right",
+    "contentBounds": [
+      17,
+      23,
+      240,
+      246
+    ],
+    "anchor": {
+      "x": 0.5,
+      "y": 0.9609
+    }
+  },
+  "cargoCart": {
+    "url": "cargo-cart.png",
+    "width": 256,
+    "height": 200,
+    "contentBounds": [
+      12,
+      28,
+      227,
+      190
+    ],
+    "anchor": {
+      "x": 0.5,
+      "y": 0.95
+    }
+  },
+  "oreCluster": {
+    "url": "ore-cluster.png",
+    "width": 192,
+    "height": 192,
+    "contentBounds": [
+      26,
+      30,
+      167,
+      171
+    ],
+    "anchor": {
+      "x": 0.5,
+      "y": 0.8906
+    }
+  },
+  "crawler": {
+    "url": "crawler.svg",
+    "width": 256,
+    "height": 160,
+    "facing": "right"
+  },
+  "spitter": {
+    "url": "spitter.svg",
+    "width": 256,
+    "height": 192,
+    "facing": "right"
+  },
+  "brute": {
+    "url": "brute.svg",
+    "width": 320,
+    "height": 224,
+    "facing": "right"
+  },
+  "icon": {
+    "url": "icon.svg",
+    "width": 128,
+    "height": 128
+  },
+  "turretBase": {
+    "url": "turret-base.png",
+    "width": 256,
+    "height": 256,
+    "facing": "right",
+    "pivot": {
+      "x": 0.293868,
+      "y": 0.295724
+    },
+    "description": "Same framing as turret.png, with gun assembly removed for an independently aimed runtime barrel."
+  }
+}

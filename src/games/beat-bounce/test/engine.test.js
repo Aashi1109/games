@@ -1,0 +1,7 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {TRACKS,chart,createRun,tap,expire,accuracy,grade,calibrationOffset} from '../engine.ts';
+test('every chart has a count-in, sorted notes, a rest and a complete duration',()=>{for(const t of TRACKS){const notes=chart(t);assert.ok(notes[0].time>=4*60/t.bpm);assert.ok(notes.every((n,i)=>!i||n.time>notes[i-1].time));assert.ok(notes.at(-1).time<t.beats*60/t.bpm);assert.ok(!notes.some(n=>n.beat===7));}});
+test('perfect play finishes with S and cannot judge a note twice',()=>{for(const t of TRACKS){const r=createRun(t);for(const n of r.notes)tap(r,n.time);assert.equal(r.perfect,r.notes.length);assert.equal(accuracy(r),100);assert.equal(grade(r),'S');const perfect=r.perfect;tap(r,r.notes.at(-1).time);assert.equal(r.perfect,perfect);expire(r,r.duration+1);assert.equal(r.done,true);}});
+test('late/early windows and misses are accounted once',()=>{const r=createRun(TRACKS[0]);tap(r,r.notes[0].time+.1);assert.equal(r.good,1);expire(r,r.duration+1);assert.equal(r.missed,r.notes.length-1);expire(r,r.duration+2);assert.equal(r.missed,r.notes.length-1);});
+test('offbeat spam cannot produce a perfect result',()=>{const r=createRun(TRACKS[0]);for(let t=0;t<r.duration;t+=.01)tap(r,t);assert.ok(r.strays>100);assert.ok(r.score<r.notes.length*60);assert.ok(accuracy(r)<100);});
+test('calibration ignores invalid samples and uses median',()=>{assert.equal(calibrationOffset([.04,.03,.05,.25,NaN,10]),50);assert.equal(calibrationOffset([]),0);});

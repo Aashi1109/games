@@ -1,0 +1,223 @@
+/* Game routes are a single viewport. The catalogue keeps normal document flow. */
+body[data-game]{height:100dvh;min-height:0;overflow:hidden}
+body[data-game] #app{height:100%;min-height:0;display:grid;grid-template-rows:auto minmax(0,1fr)}
+body[data-game] #app .game-navigation{width:100%;min-height:52px;height:52px;padding:4px 16px;gap:12px}
+body[data-game] #app .game-nav-title{font-size:clamp(20px,2.1vw,28px)}
+.game-help-button{display:grid;place-items:center;width:44px;height:44px;flex:0 0 44px;font-size:18px;font-weight:700}
+body[data-game] #app .game-navigation .sound-switch{margin-left:0}
+body[data-game] #app .play-page{width:100%;height:100%;min-height:0;max-width:1440px;padding:4px 16px 12px}
+body[data-game] #app .play-shell{width:100%;height:100%;min-height:0;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);overflow:visible}
+body[data-game] #app .play-toolbar{grid-column:1;grid-row:1;display:flex;flex-direction:row;align-items:center;justify-content:space-between;min-height:52px;padding:4px 16px;gap:12px;border:0}
+body[data-game] #app .game-stats{display:flex;flex-direction:row;align-items:center;gap:24px;width:auto}
+body[data-game] #app .stat{display:flex;flex-direction:row;align-items:baseline;gap:8px}
+body[data-game] #app .stat strong{font-size:26px}
+body[data-game] #app .play-toolbar>.personal-best{display:flex;align-items:baseline;align-self:auto;gap:8px;margin:0 0 0 auto;padding:0;border:0}
+body[data-game] #app .play-toolbar>.personal-best strong{font-size:20px;margin:0}
+body[data-game] #app .play-actions{display:flex;flex-wrap:nowrap;margin:0;gap:4px}
+body[data-game] #app .tool-button{min-width:44px;height:44px;padding:0 8px}
+body[data-game] #app .game-stage{grid-column:1;grid-row:2;min-width:0;min-height:0;height:100%}
+body[data-game] #app #game-host{height:100%;min-height:0;display:grid;grid-template-rows:minmax(0,1fr) auto;grid-template-columns:minmax(0,1fr)}
+body[data-game] #app #game-host>.game-board{width:100%;height:100%;min-height:0;max-width:none;margin:0;display:flex}
+body[data-game] #app .canvas-viewport{width:100%;height:100%;min-width:0;min-height:0;display:grid;place-items:center;container-type:size}
+body[data-game] #app canvas.game-board{display:block;width:min(100cqw,calc(100cqh * var(--canvas-ratio)));height:auto;max-width:none;max-height:none;margin:0;aspect-ratio:var(--canvas-ratio)}
+body[data-game] #app .game-controls{min-height:52px;padding:4px 12px;gap:8px;flex-wrap:nowrap}
+body[data-game] #app .game-control,body[data-game] #app .game-action{min-height:44px}
+body[data-game] #app .game-note{display:none}
+body[data-game] #app .play-bottom{display:none}
+body[data-game] #app .intro-overlay{inset:auto 0 0;width:auto;padding:12px 16px}
+body[data-game] #app .intro-content{display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:16px;max-width:none}
+body[data-game] #app .intro-content h2{font-size:16px}
+body[data-game] #app .intro-content .button{min-width:100px}
+body[data-game] #app .game-overlay:not(.intro-overlay){position:fixed;inset:68px max(16px,calc((100vw - 1408px)/2)) 16px;padding:20px;z-index:10}
+body[data-game] #app .result-content{max-width:560px}
+body[data-game] #app .result-content p{font-size:14px;line-height:1.5;margin:12px 0}
+body[data-game] #app .result-content h2{font-size:clamp(25px,4vw,42px)}
+body[data-game] #app .result-score{margin:12px 0}
+body[data-game] #app .result-score strong{font-size:44px}
+body[data-game] #app .result-actions{gap:16px}
+body[data-game] #app .game-help{position:fixed;inset:0;max-width:min(520px,calc(100vw - 24px));max-height:calc(100dvh - 24px);padding:24px;border:1px solid var(--line);background:var(--paper);color:var(--ink);overflow:visible}
+.game-help::backdrop{background:#17251cd9}
+body[data-game] #app .game-help h2{font:700 28px/1.1 var(--display)}
+body[data-game] #app .game-help p{font-size:14px;line-height:1.5;margin:16px 0}
+body[data-game] #app .game-help ul{font-size:13px;line-height:1.6;margin:16px 0 20px;padding-left:20px}
+body[data-game] #app .game-help .button{min-height:44px}
+
+/* Puzzle boards share the available height with their real actions. */
+body:is([data-game="daily-circuit"],[data-game="block-bloom"],[data-game="shelf-shuffle"]) #app #game-host{display:block}
+body[data-game] #app .dc-root{height:100%;min-height:0;padding:16px 0}
+body[data-game] #app .dc-layout{height:100%;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 240px;gap:32px;align-items:start;max-width:1040px;margin:auto}
+body[data-game] #app .dc-machine{height:100%;max-height:650px;width:100%;min-height:0;padding:16px;display:grid;grid-template-rows:auto minmax(0,1fr) auto;container-type:size}
+body[data-game] #app .dc-grid{width:min(100cqw,calc(100cqh - 64px));height:auto;max-width:none;max-height:none;aspect-ratio:1;margin:auto;min-height:0}
+body[data-game] #app .dc-machine-header{margin:0 0 12px}
+body[data-game] #app .dc-machine-footer{margin:12px 0 0}
+body[data-game] #app .dc-aside{width:100%;min-width:0}
+body[data-game] #app .dc-status{font-size:12px!important;line-height:1.5;min-height:0}
+body[data-game] #app .bloom{height:100%;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 252px;gap:32px;padding:20px 0;align-items:start;max-width:1040px;margin:auto}
+body[data-game] #app .bloom-garden{width:100%;height:100%;min-height:0;display:grid;place-items:center;container-type:size}
+body[data-game] #app .bloom-grid{width:min(100cqw,100cqh,620px);height:auto;margin:0;aspect-ratio:1}
+body[data-game] #app .bloom-rule{display:none}
+body[data-game] #app .bloom-side{width:100%;min-height:0;gap:12px;padding:0}
+body[data-game] #app .bloom-tray{margin:0;gap:8px}
+body[data-game] #app .bloom-action{margin:0;min-height:44px}
+body[data-game] #app .bloom-status{min-height:0}
+body[data-game] #app .ss-root{height:100%;min-height:0;padding:24px}
+body[data-game] #app .ss-layout{height:100%;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 240px;gap:24px;align-items:start}
+body[data-game] #app .ss-shop{height:100%;min-height:0;max-height:640px;display:grid;grid-template-rows:auto minmax(0,1fr) auto}
+body[data-game] #app .ss-shop-top{padding:16px 20px 0}
+body[data-game] #app .ss-board{min-height:0;grid-auto-rows:minmax(0,1fr);align-items:stretch;gap:14px;padding:20px 20px 10px}
+body[data-game] #app .ss-shelf{min-height:0;padding:0}
+body[data-game] #app .ss-stack{height:auto;min-height:0;flex:1;container-type:size;gap:4px;padding:6px}
+body[data-game] #app .ss-parcel{height:calc((100cqh - (var(--ss-capacity) - 1)*4px)/var(--ss-capacity));min-height:0;max-height:70px;flex-shrink:0}
+body[data-game] #app .ss-parcel svg{max-height:65%}
+body[data-game] #app .ss-shelf-label{margin-top:12px;min-width:0}
+body[data-game] #app .ss-shop-bottom{padding:8px 20px 14px}
+body[data-game] #app .ss-aside{padding:0;gap:12px;min-height:0}
+body[data-game] #app .ss-status{min-height:0;flex:0 0 auto}
+
+/* Desktop instruments retain their side composition. */
+@media(min-width:960px) and (min-height:600px){
+  body[data-game] #app .bloom-garden{place-items:start center}
+  body:is([data-game="trap-sprint"],[data-game="corner-rush"],[data-game="wobble-delivery"]) #app .play-shell{grid-template-columns:minmax(0,1fr) 224px;grid-template-rows:auto minmax(0,1fr)}
+  body:is([data-game="trap-sprint"],[data-game="corner-rush"],[data-game="wobble-delivery"]) #app .game-stage{grid-column:1;grid-row:1/3}
+  body:is([data-game="trap-sprint"],[data-game="corner-rush"],[data-game="wobble-delivery"]) #app .play-toolbar{grid-column:2;grid-row:1;flex-direction:column;align-items:stretch;padding:24px 20px;gap:20px}
+  body:is([data-game="trap-sprint"],[data-game="corner-rush"],[data-game="wobble-delivery"]) #app .game-stats{flex-direction:column;align-items:stretch;gap:16px}
+  body:is([data-game="trap-sprint"],[data-game="corner-rush"],[data-game="wobble-delivery"]) #app .stat{justify-content:space-between}
+  body:is([data-game="trap-sprint"],[data-game="corner-rush"],[data-game="wobble-delivery"]) #app .play-toolbar>.personal-best{margin:0;justify-content:space-between;border-top:1px solid var(--line);padding-top:16px}
+  body:is([data-game="trap-sprint"],[data-game="corner-rush"],[data-game="wobble-delivery"]) #app .play-actions{justify-content:space-between}
+  body:is([data-game="trap-sprint"],[data-game="corner-rush"],[data-game="wobble-delivery"]) #app .play-bottom{display:block;grid-column:2;grid-row:2;min-height:0;padding:20px}
+  body[data-game="trap-sprint"] #app .play-shell{grid-template-columns:224px minmax(0,1fr)}
+  body[data-game="trap-sprint"] #app .game-stage{grid-column:2}
+  body[data-game="trap-sprint"] #app .play-toolbar,body[data-game="trap-sprint"] #app .play-bottom{grid-column:1}
+  body[data-game="bumper-ring"] #app #game-host{grid-template-columns:minmax(0,1fr) 224px;grid-template-rows:minmax(0,1fr)}
+  body[data-game="bumper-ring"] #app .game-controls{height:100%;flex-direction:column;justify-content:center;gap:28px;padding:24px 20px}
+  body[data-game="bumper-ring"] #app .game-note{display:block}
+  body[data-game="daily-circuit"] #app .intro-overlay{inset:16px max(0px,calc((100% - 1040px)/2)) auto auto;width:240px}
+  body[data-game="block-bloom"] #app .intro-overlay{inset:20px max(0px,calc((100% - 1040px)/2)) auto auto;width:252px}
+  body[data-game="shelf-shuffle"] #app .intro-overlay{inset:24px 24px auto auto;width:240px}
+  body[data-game="bumper-ring"] #app .intro-overlay{inset:24px 20px auto auto;width:184px}
+  body:is([data-game="block-bloom"],[data-game="daily-circuit"],[data-game="shelf-shuffle"],[data-game="bumper-ring"]) #app .intro-content{flex-direction:column;align-items:stretch}
+}
+
+/* Portrait: the tray follows the board and touch actions stay in thumb range. */
+@media(max-width:959px) and (min-height:600px),(max-width:599px){
+  body[data-game] #app .play-page{padding:0 8px 8px}
+  body[data-game] #app .game-navigation{padding:4px 10px;gap:4px}
+  body[data-game] #app .game-nav-title{font-size:21px}
+  body[data-game] #app .game-collection-link,body[data-game] #app .sound-switch span{display:none}
+  body[data-game] #app .game-help-button{margin-left:auto}
+  body[data-game] #app .play-toolbar{min-height:52px;padding:4px 8px;gap:4px}
+  body[data-game] #app .game-stats{gap:14px}
+  body[data-game] #app .stat{flex-direction:column;gap:3px}
+  body[data-game] #app .stat span{font-size:8px}
+  body[data-game] #app .stat strong{font-size:21px}
+  body[data-game] #app .play-toolbar>.personal-best{display:none}
+  body[data-game] #app .tool-button{padding:0}
+  body[data-game] #app .tool-button span{display:none}
+  body[data-game] #app .game-controls{padding:4px 8px;gap:8px}
+  body[data-game] #app .game-controls>button{min-width:44px!important;padding:6px 10px;font-size:12px}
+  body[data-game="bumper-ring"] #app .game-controls{justify-content:space-between;min-height:108px}
+  body[data-game="bumper-ring"] #app [data-charge]{min-width:115px!important;min-height:64px;width:120px;padding:8px}
+  body[data-game="corner-rush"] #app .game-controls{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+  body[data-game="corner-rush"] #app .game-controls .game-action{grid-column:1/-1;min-height:44px}
+  body[data-game] #app .dc-root{padding:8px 0 0}
+  body[data-game] #app .dc-layout{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto;gap:8px}
+  body[data-game] #app .dc-machine{max-width:650px;max-height:none;margin:auto;padding:12px;container-type:size}
+  body[data-game] #app .dc-grid{width:min(100cqw,calc(100cqh - 60px));height:auto;max-height:none}
+  body[data-game] #app .dc-machine-header,body[data-game] #app .dc-machine-footer{font-size:9px;gap:8px}
+  body[data-game] #app .dc-aside{display:grid;grid-template-columns:1fr 1fr;gap:0 12px;padding:0 4px}
+  body[data-game] #app .dc-aside h3,body[data-game] #app .dc-aside>p:not(.dc-status),body[data-game] #app .dc-light-note,body[data-game] #app .dc-legend,body[data-game] #app .dc-date{display:none}
+  body[data-game] #app .dc-status{grid-column:1/-1;border:0;padding:0;margin:0 0 4px!important;font-size:11px!important;line-height:1.4}
+  body[data-game] #app .dc-button{min-height:44px;padding:6px 0;font-size:11px;border-top:1px solid var(--line)}
+  body[data-game] #app .bloom{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto;gap:12px;padding:8px 0 0}
+  body[data-game] #app .bloom-garden{width:100%;justify-self:stretch}
+  body[data-game] #app .bloom-grid{width:min(100cqw,100cqh,600px);padding:8px;gap:3px}
+  body[data-game] #app .bloom-side{max-width:600px;gap:4px;display:grid;grid-template-columns:minmax(0,1fr) auto}
+  body[data-game] #app .bloom-side h3,body[data-game] #app .bloom-side>p{display:none}
+  body[data-game] #app .bloom-tray{grid-column:1/-1;display:flex;gap:8px}
+  body[data-game] #app .bloom-piece{height:72px;min-height:44px;padding:10px}
+  body[data-game] #app .bloom-mini span{width:12px;height:12px}
+  body[data-game] #app .bloom-status{text-align:left;font-size:11px;line-height:1.4;padding:0;border:0;align-self:center}
+  body[data-game] #app .bloom-action{font-size:10px;padding:4px;align-self:center}
+  body[data-game] #app .ss-root{padding:8px}
+  body[data-game] #app .ss-layout{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto;gap:8px}
+  body[data-game] #app .ss-shop{max-height:none}
+  body[data-game] #app .ss-shop-top{padding:10px 10px 0;font-size:8px}
+  body[data-game] #app .ss-board{grid-template-columns:repeat(var(--ss-mobile),minmax(0,1fr));padding:12px 8px 6px;gap:10px 8px}
+  body[data-game] #app .ss-shelf-label{font-size:9px;padding:3px 6px;margin-top:8px}
+  body[data-game] #app .ss-plank{height:6px;flex:0 0 6px}
+  body[data-game] #app .ss-shop-bottom{font-size:9px;padding:6px 10px 8px}
+  body[data-game] #app .ss-aside{display:flex;flex-direction:column;align-items:stretch;gap:6px}
+  body[data-game] #app .ss-aside h3,body[data-game] #app .ss-aside>p:not(.ss-status),body[data-game] #app .ss-eyebrow,body[data-game] #app .ss-legend{display:none}
+  body[data-game] #app .ss-buttons{display:flex;gap:6px;justify-content:center;order:0}
+  body[data-game] #app .ss-action{min-height:44px;padding:6px 12px;font-size:11px}
+  body[data-game] #app .ss-status{order:1;font-size:11px;line-height:1.4;margin:0}
+}
+
+/* Short landscape: board and action station remain side by side. */
+@media(min-width:600px) and (max-height:599px){
+  body[data-game] #app .game-navigation{height:48px;min-height:48px;padding-block:2px}
+  body[data-game] #app .play-page{padding:0 10px 8px}
+  body[data-game] #app .play-toolbar{min-height:48px;padding:2px 10px}
+  body[data-game] #app .game-stats{gap:20px}
+  body[data-game] #app .stat strong{font-size:23px}
+  body[data-game] #app .tool-button span{display:none}
+  body[data-game] #app .game-controls{min-height:48px;padding:2px 8px}
+  body[data-game="bumper-ring"] #app #game-host{grid-template-columns:minmax(0,1fr) 180px;grid-template-rows:minmax(0,1fr)}
+  body[data-game="bumper-ring"] #app .game-controls{flex-direction:column;gap:12px;justify-content:center;padding:8px}
+  body[data-game="bumper-ring"] #app [data-charge]{min-width:150px!important;min-height:52px;max-width:160px;padding:8px;border-radius:10px}
+  body[data-game] #app .dc-root{padding:4px 0}
+  body[data-game] #app .dc-layout{grid-template-columns:minmax(0,1fr) 220px;gap:20px;max-width:720px}
+  body[data-game] #app .dc-machine{container-type:size;padding:8px;max-width:460px;margin:auto}
+  body[data-game] #app .dc-grid{width:min(100cqw,calc(100cqh - 44px));max-height:none}
+  body[data-game] #app .dc-machine-header,body[data-game] #app .dc-machine-footer{font-size:9px;margin:4px 0;gap:8px}
+  body[data-game] #app .dc-aside h3,body[data-game] #app .dc-aside>p:not(.dc-status),body[data-game] #app .dc-light-note{display:none}
+  body[data-game] #app .dc-aside{padding:0}
+  body[data-game] #app .dc-status{padding:8px 0;margin:4px 0!important;font-size:11px!important}
+  body[data-game] #app .dc-button{min-height:44px;font-size:11px;padding:6px 0}
+  body[data-game] #app .dc-legend{margin:8px 0;font-size:10px}
+  body[data-game] #app .bloom{padding:8px 0;gap:20px;grid-template-columns:minmax(0,1fr) 260px;max-width:740px}
+  body[data-game] #app .bloom-side{gap:8px}
+  body[data-game] #app .bloom-side h3,body[data-game] #app .bloom-side>p{display:none}
+  body[data-game] #app .bloom-piece{height:80px}
+  body[data-game] #app .bloom-status{font-size:12px;padding:4px 0;text-align:left}
+  body[data-game] #app .ss-root{padding:8px}
+  body[data-game] #app .ss-layout{grid-template-columns:minmax(0,1fr) 200px;gap:16px}
+  body[data-game] #app .ss-shop-top{padding:8px 10px 0;font-size:9px}
+  body[data-game] #app .ss-board{grid-template-columns:repeat(var(--ss-count),minmax(0,1fr));padding:10px;gap:8px}
+  body[data-game] #app .ss-shop-bottom{padding:4px 10px 8px;font-size:9px}
+  body[data-game] #app .ss-aside{display:flex;flex-direction:column;gap:12px;align-items:stretch}
+  body[data-game] #app .ss-aside h3,body[data-game] #app .ss-aside>p:not(.ss-status),body[data-game] #app .ss-legend{display:none}
+  body[data-game] #app .ss-buttons{display:grid;grid-template-columns:1fr 1fr;gap:6px;order:1}
+  body[data-game] #app .ss-buttons [data-ss-hint]{grid-column:1/-1}
+  body[data-game] #app .ss-action{min-height:44px;padding:6px;font-size:11px}
+  body[data-game] #app .ss-status{font-size:12px;order:0}
+  body[data-game] #app .intro-overlay{padding:8px 12px}
+  body:is([data-game="block-bloom"],[data-game="daily-circuit"],[data-game="shelf-shuffle"],[data-game="bumper-ring"]) #app .intro-overlay{inset:8px 8px auto auto;width:200px}
+  body:is([data-game="block-bloom"],[data-game="daily-circuit"],[data-game="shelf-shuffle"],[data-game="bumper-ring"]) #app .intro-content{flex-direction:column;align-items:stretch;gap:8px}
+  body[data-game] #app .game-overlay:not(.intro-overlay){inset:54px 10px 8px;padding:12px}
+  body[data-game] #app .result-content .eyebrow{font-size:9px;margin-bottom:6px}
+  body[data-game] #app .result-content h2{font-size:25px}
+  body[data-game] #app .result-content p{font-size:12px;line-height:1.4;margin:8px 0}
+  body[data-game] #app .result-score{display:flex;align-items:baseline;justify-content:center;gap:8px;margin:8px}
+  body[data-game] #app .result-score strong{font-size:30px}
+  body[data-game] #app .result-actions{flex-direction:row;justify-content:center;gap:24px}
+  body[data-game] #app .result-content>.button{margin-top:8px}
+  body[data-game] #app .game-help{padding:16px 24px}
+  body[data-game] #app .game-help h2{font-size:24px}
+  body[data-game] #app .game-help p,body[data-game] #app .game-help ul{font-size:12px;line-height:1.4;margin:10px 0}
+}
+@media(max-width:359px){
+  body[data-game] #app .game-navigation{gap:0;padding-inline:6px}
+  body[data-game] #app .game-nav-title{font-size:18px}
+  body[data-game] #app .game-stats{gap:10px}
+  body[data-game] #app .stat strong{font-size:19px}
+  body[data-game] #app .game-help{padding:18px}
+  body[data-game] #app .game-help p{font-size:13px}
+  body[data-game] #app .intro-content h2{font-size:13px}
+  body[data-game] #app .intro-overlay{padding:10px}
+  body[data-game] #app .intro-content .button{padding:10px 16px;min-width:90px}
+  body[data-game] #app .bloom-piece{height:64px}
+  body[data-game] #app .bloom-mini span{width:10px;height:10px}
+  body[data-game] #app .result-content p{font-size:12px}
+  body[data-game] #app .result-actions{gap:12px}
+}

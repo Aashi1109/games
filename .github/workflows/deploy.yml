@@ -1,0 +1,96 @@
+name: Deploy Questline
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: questline-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 30
+    env:
+      SSH_HOST: ${{ secrets.SSH_HOST }}
+      SSH_USER: ${{ secrets.SSH_USER }}
+    steps:
+      - name: Check out repository and Git LFS assets
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Set up SSH
+        env:
+          SSH_KEY: ${{ secrets.SSH_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+        run: |
+          for secret in SSH_HOST SSH_USER SSH_KEY SSH_KNOWN_HOSTS; do
+            if [ -z "${!secret}" ]; then
+              echo "::error::Missing GitHub Actions secret: $secret"
+              exit 1
+            fi
+          done
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+          ssh-keygen -y -f ~/.ssh/deploy_key | ssh-keygen -lf -
+
+      - name: Verify Oracle prerequisites
+        run: |
+          ssh -i ~/.ssh/deploy_key -o BatchMode=yes -o IdentitiesOnly=yes "$SSH_USER@$SSH_HOST" 'bash -se' <<'REMOTE'
+          test "$(uname -m)" = aarch64
+          docker compose version
+          docker network inspect web > /dev/null
+          test "$(docker inspect --format '{{.State.Running}}' caddy)" = true
+          REMOTE
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Normalize image name
+        env:
+          OWNER: ${{ github.repository_owner }}
+        run: echo "QUESTLINE_IMAGE=ghcr.io/$(printf '%s' "$OWNER" | tr '[:upper:]' '[:lower:]')/questline" >> "$GITHUB_ENV"
+
+      - name: Build and push application image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/arm64
+          target: runtime
+          push: true
+          cache-from: type=gha,scope=questline
+          cache-to: type=gha,mode=max,scope=questline
+          tags: ${{ env.QUESTLINE_IMAGE }}:latest
+          labels: |
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+
+      - name: Copy deployment files and restart Questline
+        run: |
+          ssh -i ~/.ssh/deploy_key -o BatchMode=yes -o IdentitiesOnly=yes "$SSH_USER@$SSH_HOST" 'mkdir -p ~/apps/questline ~/apps/caddy/sites'
+          scp -i ~/.ssh/deploy_key -o BatchMode=yes -o IdentitiesOnly=yes docker-compose.yml "$SSH_USER@$SSH_HOST:~/apps/questline/docker-compose.yml"
+          scp -i ~/.ssh/deploy_key -o BatchMode=yes -o IdentitiesOnly=yes caddy/questline.caddy "$SSH_USER@$SSH_HOST:~/apps/caddy/sites/questline.caddy"
+          ssh -i ~/.ssh/deploy_key -o BatchMode=yes -o IdentitiesOnly=yes "$SSH_USER@$SSH_HOST" 'bash -se' <<'REMOTE'
+          cd ~/apps/questline
+          docker compose pull
+          docker compose up -d --wait --wait-timeout 120 --remove-orphans
+          docker exec caddy caddy validate --config /etc/caddy/Caddyfile
+          docker exec caddy caddy reload --config /etc/caddy/Caddyfile
+          REMOTE

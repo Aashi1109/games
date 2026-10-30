@@ -57,8 +57,8 @@ export async function createCollectionServer({
       response.writeHead(503).end('Server is shutting down');
       return;
     }
-    // Only a configured proxy may supply a validated client address.
-    const proxyAddress = request.headers['x-questline-client-address'];
+    // Only a trusted proxy may supply X-Real-IP; never trust our internal header.
+    const proxyAddress = request.headers['x-real-ip'];
     request.headers['x-questline-client-address'] =
       trustProxy && typeof proxyAddress === 'string' && isIP(proxyAddress) !== 0
         ? proxyAddress

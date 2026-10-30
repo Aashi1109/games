@@ -4,6 +4,7 @@ import http from 'node:http';
 import test from 'node:test';
 import { WebSocket } from 'ws';
 import { createCollectionServer } from '../src/server.ts';
+import { getRuntime } from '../src/server/runtime.ts';
 
 const close = (server) =>
   new Promise((resolve, reject) =>
@@ -36,6 +37,57 @@ function receive(socket, type) {
       socket.off('message', onMessage);
     };
     socket.on('message', onMessage);
+  });
+}
+
+for (const trustProxy of [false, true]) {
+  test(`client addresses use a single validated proxy IP only when trustProxy=${trustProxy}`, async (t) => {
+    const server = await createCollectionServer({ trustProxy });
+    t.after(() => close(server));
+    t.mock.method(getRuntime().doodle, 'handle', (request) =>
+      Response.json({
+        address: request.headers.get('x-questline-client-address'),
+      }),
+    );
+    server.listen(0, '127.0.0.1');
+    await once(server, 'listening');
+    const origin = `http://127.0.0.1:${server.address().port}`;
+    const cases = [
+      { headers: { 'X-Real-IP': '198.51.100.7' }, expected: '198.51.100.7' },
+      { headers: { 'X-Real-IP': '2001:db8::7' }, expected: '2001:db8::7' },
+      { headers: {}, expected: '127.0.0.1' },
+      { headers: { 'X-Real-IP': 'not-an-ip' }, expected: '127.0.0.1' },
+      {
+        headers: { 'X-Real-IP': '198.51.100.7, 203.0.113.8' },
+        expected: '127.0.0.1',
+      },
+      {
+        headers: { 'X-Questline-Client-Address': '203.0.113.8' },
+        expected: '127.0.0.1',
+      },
+      {
+        headers: { 'X-Forwarded-For': '203.0.113.8' },
+        expected: '127.0.0.1',
+      },
+      {
+        headers: {
+          'X-Real-IP': '198.51.100.7',
+          'X-Questline-Client-Address': '203.0.113.8',
+        },
+        expected: '198.51.100.7',
+      },
+    ];
+    for (const { headers, expected } of cases) {
+      const response = await fetch(`${origin}/doodle-dash/api/rooms`, {
+        headers,
+      });
+      assert.equal(response.status, 200);
+      assert.equal(
+        (await response.json()).address,
+        trustProxy ? expected : '127.0.0.1',
+        JSON.stringify(headers),
+      );
+    }
   });
 }
 
